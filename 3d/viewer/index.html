@@ -46,12 +46,18 @@ function xyzAt(lon,lat,offset=3){
  const [west,south,east,north]=d.bounds_wgs84;
  return new THREE.Vector3((lon-d.center_wgs84[0])*111320*Math.cos(d.center_wgs84[1]*Math.PI/180),surfaceAt(lon,lat)+offset,(d.center_wgs84[1]-lat)*111132);
 }
+const importedGroup=new THREE.Group();scene.add(importedGroup);
+function clearGroup(g){while(g.children.length){const o=g.children[0];g.remove(o);o.geometry?.dispose();o.material?.dispose();}}
+let parcelFailure=null;
+try {
 const boundaryPts=[];
 for(let k=0;k<4;k++){const a=preliminaryCorners[k],b=preliminaryCorners[(k+1)%4];for(let step=0;step<32;step++){let t=step/32;boundaryPts.push(xyzAt(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t));}}
 line(boundaryPts,0xff3047);
 for(const corner of preliminaryCorners){const marker=new THREE.Mesh(new THREE.SphereGeometry(5,10,8),new THREE.MeshBasicMaterial({color:0xff3047}));marker.position.copy(xyzAt(...corner,5));scene.add(marker);}
 const entrance=new THREE.Mesh(new THREE.SphereGeometry(8,12,10),new THREE.MeshBasicMaterial({color:0x00ffad}));entrance.position.copy(xyzAt(-111.486472,42.2905,8));scene.add(entrance);
-const importedGroup=new THREE.Group();scene.add(importedGroup);
+}catch(err){parcelFailure=err;console.error('Parcel overlay error',err);}
+let windFailure=null;
+try {
 const windGroup=new THREE.Group();scene.add(windGroup);
 const windBearings={W:270,WNW:292.5,SW:225,NW:315,E:90};
 function setWindScenario(direction){
@@ -79,8 +85,8 @@ function setWindScenario(direction){
 document.getElementById('windDirection').onchange=e=>setWindScenario(e.target.value);
 setWindScenario(document.getElementById('windDirection').value);
 
+}catch(err){windFailure=err;console.error('Wind overlay error',err);}
 const importStatus=document.getElementById('importStatus');
-function clearGroup(g){while(g.children.length){const o=g.children[0];g.remove(o);o.geometry?.dispose();o.material?.dispose();}}
 function geoPt(p){if(!Array.isArray(p)||p.length<2||!p.slice(0,2).every(Number.isFinite))throw Error('Invalid coordinate');if(p[0]<d.bounds_wgs84[0]||p[0]>d.bounds_wgs84[2]||p[1]<d.bounds_wgs84[1]||p[1]>d.bounds_wgs84[3])return null;return xyzAt(p[0],p[1],8)}
 function drawLine(arr,closed){const points=arr.map(geoPt).filter(Boolean);if(points.length<2)return 0;const g=new THREE.BufferGeometry().setFromPoints(points);const m=new THREE.LineBasicMaterial({color:0x00d8ff});importedGroup.add(closed?new THREE.LineLoop(g,m):new THREE.Line(g,m));return 1}
 document.getElementById('geoUpload').onchange=async e=>{try{
@@ -121,8 +127,8 @@ try{
 }catch(roadError){details.textContent+=' Road overlay unavailable: '+roadError.message;}
 
 
- status.textContent='Measured terrain and preliminary parcel overlay loaded';status.style.color='#98efb5';
- details.textContent='USGS-derived DEM mesh · '+n+' × '+n+' vertices · elevation '+min.toFixed(1)+'–'+max.toFixed(1)+' m. Terrain is planning-grade, not survey-grade. Road and imagery overlays are visual references.';
+ status.textContent='Measured terrain loaded';status.style.color='#98efb5';
+ details.textContent='USGS mesh '+n+'×'+n+' · elevation '+min.toFixed(1)+'–'+max.toFixed(1)+' m. Parcel overlay: '+(parcelFailure?'ERROR '+parcelFailure.message:'loaded')+'. Wind overlay: '+(windFailure?'ERROR '+windFailure.message:'initialized')+'.';
 }catch(e){status.textContent='Terrain data not available';details.textContent='Viewer error: '+e.message+' (see browser console for stack).';console.error('Lanark viewer failure',e);}
 }
 main();function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
