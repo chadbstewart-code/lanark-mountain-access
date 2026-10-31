@@ -1,0 +1,57 @@
+{
+  "type": "FeatureCollection",
+  "name": "Parcel 21 preliminary GPS only",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_pin": "RP13S43E185400",
+        "status": "APPROXIMATE",
+        "source": "Owner Google Maps markers",
+        "surveyed": false,
+        "warning": "Do not use for setbacks, ownership or construction"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -111.486556,
+              42.292444
+            ],
+            [
+              -111.478639,
+              42.292333
+            ],
+            [
+              -111.478806,
+              42.289194
+            ],
+            [
+              -111.4865,
+              42.289194
+            ],
+            [
+              -111.486556,
+              42.292444
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Owner-reported existing entrance",
+        "status": "APPROXIMATE"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -111.486472,
+          42.2905
+        ]
+      }
+    }
+  ]
+}
