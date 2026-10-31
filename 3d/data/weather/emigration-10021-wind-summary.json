@@ -1,0 +1,198 @@
+{
+  "station": "Emigration Canyon",
+  "stationid": 10021,
+  "source": "https://gisp.itd.idaho.gov/hosting/rest/services/Hosted/RWIS_HistoricData/FeatureServer/0/query",
+  "retrieved_records": 46920,
+  "unique_timestamps": 45973,
+  "duplicates_removed": 947,
+  "gust_p95_mph": 22.6,
+  "sectors": {
+    "N": {
+      "count": 2835,
+      "high_gust_count": 7
+    },
+    "NE": {
+      "count": 1261,
+      "high_gust_count": 3
+    },
+    "E": {
+      "count": 1884,
+      "high_gust_count": 1
+    },
+    "SE": {
+      "count": 5328,
+      "high_gust_count": 49
+    },
+    "S": {
+      "count": 3462,
+      "high_gust_count": 251
+    },
+    "SW": {
+      "count": 4237,
+      "high_gust_count": 402
+    },
+    "W": {
+      "count": 12511,
+      "high_gust_count": 1044
+    },
+    "NW": {
+      "count": 14455,
+      "high_gust_count": 577
+    }
+  },
+  "seasonal": {
+    "winter": {
+      "observations": 8306,
+      "sectors": {
+        "N": {
+          "count": 623,
+          "high_gust_count": 2
+        },
+        "NE": {
+          "count": 228,
+          "high_gust_count": 1
+        },
+        "E": {
+          "count": 285,
+          "high_gust_count": 0
+        },
+        "SE": {
+          "count": 792,
+          "high_gust_count": 1
+        },
+        "S": {
+          "count": 1017,
+          "high_gust_count": 28
+        },
+        "SW": {
+          "count": 787,
+          "high_gust_count": 110
+        },
+        "W": {
+          "count": 1847,
+          "high_gust_count": 278
+        },
+        "NW": {
+          "count": 2727,
+          "high_gust_count": 68
+        }
+      }
+    },
+    "spring": {
+      "observations": 13843,
+      "sectors": {
+        "N": {
+          "count": 797,
+          "high_gust_count": 5
+        },
+        "NE": {
+          "count": 384,
+          "high_gust_count": 0
+        },
+        "E": {
+          "count": 459,
+          "high_gust_count": 1
+        },
+        "SE": {
+          "count": 1571,
+          "high_gust_count": 43
+        },
+        "S": {
+          "count": 1205,
+          "high_gust_count": 136
+        },
+        "SW": {
+          "count": 1174,
+          "high_gust_count": 122
+        },
+        "W": {
+          "count": 3835,
+          "high_gust_count": 430
+        },
+        "NW": {
+          "count": 4418,
+          "high_gust_count": 339
+        }
+      }
+    },
+    "summer": {
+      "observations": 15316,
+      "sectors": {
+        "N": {
+          "count": 905,
+          "high_gust_count": 0
+        },
+        "NE": {
+          "count": 400,
+          "high_gust_count": 2
+        },
+        "E": {
+          "count": 853,
+          "high_gust_count": 0
+        },
+        "SE": {
+          "count": 1963,
+          "high_gust_count": 5
+        },
+        "S": {
+          "count": 799,
+          "high_gust_count": 72
+        },
+        "SW": {
+          "count": 1577,
+          "high_gust_count": 146
+        },
+        "W": {
+          "count": 4176,
+          "high_gust_count": 199
+        },
+        "NW": {
+          "count": 4643,
+          "high_gust_count": 132
+        }
+      }
+    },
+    "fall": {
+      "observations": 8508,
+      "sectors": {
+        "N": {
+          "count": 510,
+          "high_gust_count": 0
+        },
+        "NE": {
+          "count": 249,
+          "high_gust_count": 0
+        },
+        "E": {
+          "count": 287,
+          "high_gust_count": 0
+        },
+        "SE": {
+          "count": 1002,
+          "high_gust_count": 0
+        },
+        "S": {
+          "count": 441,
+          "high_gust_count": 15
+        },
+        "SW": {
+          "count": 699,
+          "high_gust_count": 24
+        },
+        "W": {
+          "count": 2653,
+          "high_gust_count": 137
+        },
+        "NW": {
+          "count": 2667,
+          "high_gust_count": 38
+        }
+      }
+    }
+  },
+  "notes": [
+    "Directions are meteorological FROM bearings",
+    "Only 2021-2022 available in this source",
+    "Do not extrapolate to Lanark without local validation"
+  ]
+}
