@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D Terrain Explorer</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px;max-height:80vh;overflow:auto}select{font:inherit;padding:6px;max-width:100%}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · 3D Terrain Explorer</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><label>Wind scenario (direction wind comes FROM) <select id="windDirection"><option value="W" selected>FROM W → toward E (default)</option><option value="none">Off</option><option value="WNW">FROM WNW → toward ESE</option><option value="SW">FROM SW → toward NE</option><option value="NW">FROM NW → toward SE</option><option value="E">FROM E → toward W</option></select></label><label><input id="exposureOn" type="checkbox" checked> Terrain shelter heatmap</label><label><input id="arrowsOn" type="checkbox"> Show wind arrows</label><small id="exposureLegend">Blue-green = stronger terrain shelter · orange-red = exposed. Relative screening index, not wind speed.</small><small id="windNote" style="font-weight:bold;color:#9cdbff">Blue arrows show the selected wind flow. W → E is selected by default; arrows are illustrative, not measured.</small></p><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D Terrain Explorer</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px;max-height:80vh;overflow:auto}select{font:inherit;padding:6px;max-width:100%}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · 3D Terrain Explorer</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><label>Wind scenario (direction wind comes FROM) <select id="windDirection"><option value="W" selected>FROM W → toward E (default)</option><option value="none">Off</option><option value="WNW">FROM WNW → toward ESE</option><option value="SW">FROM SW → toward NE</option><option value="NW">FROM NW → toward SE</option><option value="E">FROM E → toward W</option></select></label><label><input id="exposureOn" type="checkbox" checked> Terrain shelter heatmap</label><label><input id="arrowsOn" type="checkbox"> Show wind arrows</label><small id="exposureLegend">Blue-green = stronger terrain shelter · orange-red = exposed. Relative screening index, not wind speed.</small><small id="windNote" style="font-weight:bold;color:#9cdbff">Blue arrows show the selected wind flow. W → E is selected by default; arrows are illustrative, not measured.</small></p><p><strong>Candidate shelter sites</strong><small>Choose A or B, then click its location on the terrain. The screenshot circles have not been georeferenced.</small><button id="pickA">Pin A (red)</button><button id="pickB">Pin B (green)</button><button id="compare">Compare all directions</button><small id="siteResult">Neither site has verified coordinates.</small><button id="exportSites">Export site coordinates</button></p><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 const status=document.querySelector('#status'), details=document.querySelector('#details'), holder=document.querySelector('#view');
@@ -58,6 +58,7 @@ for(const corner of preliminaryCorners){const marker=new THREE.Mesh(new THREE.Sp
 const entrance=new THREE.Mesh(new THREE.SphereGeometry(8,12,10),new THREE.MeshBasicMaterial({color:0x00ffad}));entrance.position.copy(xyzAt(-111.486472,42.2905,8));scene.add(entrance);
 }catch(err){parcelFailure=err;console.error('Parcel overlay error',err);}
 let windFailure=null;
+let shelterFunction=null;
 try {
 const windGroup=new THREE.Group();scene.add(windGroup);
 const windBearings={W:270,WNW:292.5,SW:225,NW:315,E:90};
@@ -91,6 +92,7 @@ function terrainIndex(direction){
  }
  return indices;
 }
+shelterFunction=terrainIndex;
 const palette=[new THREE.Color('#df5c35'),new THREE.Color('#f2bc5c'),new THREE.Color('#6cb9a0'),new THREE.Color('#2679b8')];
 function applyExposure(direction){
  heatMesh.visible=exposureToggle.checked&&direction!=='none';
@@ -121,6 +123,49 @@ exposureToggle.onchange=()=>setWindScenario(windSelect.value);
 arrowsToggle.onchange=()=>setWindScenario(windSelect.value);
 setWindScenario(windSelect.value);
 }catch(err){windFailure=err;console.error('Wind shelter overlay error',err);}
+
+// Candidate pins are selected by clicking measured terrain. Never infer coordinates from screenshot pixels.
+const candidateSites={A:null,B:null},siteMarkers={},siteResult=document.getElementById('siteResult');
+let activeSite=null,pressX=0,pressY=0;
+const picker=new THREE.Raycaster(),pointer=new THREE.Vector2();
+for(const id of ['A','B'])document.getElementById('pick'+id).onclick=()=>{
+ activeSite=id;siteResult.textContent='Click the terrain to position Site '+id+'; this is a provisional planning point.';
+};
+renderer.domElement.addEventListener('pointerdown',e=>{pressX=e.clientX;pressY=e.clientY});
+renderer.domElement.addEventListener('pointerup',e=>{
+ if(!activeSite||Math.hypot(e.clientX-pressX,e.clientY-pressY)>6)return;
+ const rect=renderer.domElement.getBoundingClientRect();
+ pointer.set(((e.clientX-rect.left)/rect.width)*2-1,-((e.clientY-rect.top)/rect.height)*2+1);
+ picker.setFromCamera(pointer,camera);
+ const hit=picker.intersectObject(terrainMesh,false)[0];
+ if(!hit){siteResult.textContent='No terrain intersection. Try another location.';return;}
+ const p=hit.point,lat=d.center_wgs84[1]-p.z/111132,lon=d.center_wgs84[0]+p.x/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180));
+ candidateSites[activeSite]={lon,lat,elevation_m:p.y+min,position:[p.x,p.z]};
+ if(siteMarkers[activeSite])scene.remove(siteMarkers[activeSite]);
+ const marker=new THREE.Mesh(new THREE.SphereGeometry(12,14,12),new THREE.MeshBasicMaterial({color:activeSite==='A'?0xff2e45:0x40ff90}));
+ marker.position.copy(p).add(new THREE.Vector3(0,15,0));scene.add(marker);siteMarkers[activeSite]=marker;
+ siteResult.textContent='Site '+activeSite+': '+lat.toFixed(6)+', '+lon.toFixed(6)+' · elevation '+(p.y+min).toFixed(1)+' m. Pin provisional.';
+ activeSite=null;
+});
+document.getElementById('compare').onclick=()=>{
+ if(!candidateSites.A||!candidateSites.B){siteResult.textContent='Pin both A and B on the terrain first.';return;}
+ if(!shelterFunction){siteResult.textContent='Shelter algorithm unavailable; check viewer diagnostics.';return;}
+ const dirs=['W','WNW','SW','NW','E'];
+ function score(site,values){
+  const x=(site.lon-d.bounds_wgs84[0])/(d.bounds_wgs84[2]-d.bounds_wgs84[0])*(n-1);
+  const y=(d.bounds_wgs84[3]-site.lat)/(d.bounds_wgs84[3]-d.bounds_wgs84[1])*(n-1);
+  const i=Math.max(0,Math.min(n-1,Math.round(y))),j=Math.max(0,Math.min(n-1,Math.round(x)));
+  return Math.round(values[i*n+j]*100);
+ }
+ const rows=dirs.map(dir=>{const values=shelterFunction(dir);return dir+': A '+score(candidateSites.A,values)+'/100 · B '+score(candidateSites.B,values)+'/100'}).join('\n');
+ siteResult.textContent='Directional terrain-only shelter index (higher = more upwind terrain; NOT predicted wind reduction):\n'+rows+'\nNo canopy, gust or turbulence effects modeled.';
+ siteResult.style.whiteSpace='pre-line';
+};
+document.getElementById('exportSites').onclick=()=>{
+ const features=Object.entries(candidateSites).filter(([id,s])=>s).map(([id,s])=>({type:'Feature',geometry:{type:'Point',coordinates:[s.lon,s.lat]},properties:{name:'Candidate '+id,elevation_m:s.elevation_m,status:'provisional click-position; not surveyed'}}));
+ if(!features.length){siteResult.textContent='Pin at least one site before export.';return;}
+ saveJSON('lanark-candidate-sites-PRELIMINARY.geojson',{type:'FeatureCollection',features});
+};
 const importStatus=document.getElementById('importStatus');
 function geoPt(p){if(!Array.isArray(p)||p.length<2||!p.slice(0,2).every(Number.isFinite))throw Error('Invalid coordinate');if(p[0]<d.bounds_wgs84[0]||p[0]>d.bounds_wgs84[2]||p[1]<d.bounds_wgs84[1]||p[1]>d.bounds_wgs84[3])return null;return xyzAt(p[0],p[1],8)}
 function drawLine(arr,closed){const points=arr.map(geoPt).filter(Boolean);if(points.length<2)return 0;const g=new THREE.BufferGeometry().setFromPoints(points);const m=new THREE.LineBasicMaterial({color:0x00d8ff});importedGroup.add(closed?new THREE.LineLoop(g,m):new THREE.Line(g,m));return 1}
