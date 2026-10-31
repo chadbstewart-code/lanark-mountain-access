@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D Terrain Explorer</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · 3D Terrain Explorer</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><a href="../../index.html">Return to 2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D Terrain Explorer</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · 3D Terrain Explorer</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 const status=document.querySelector('#status'), details=document.querySelector('#details'), holder=document.querySelector('#view');
@@ -51,6 +51,27 @@ for(let k=0;k<4;k++){const a=preliminaryCorners[k],b=preliminaryCorners[(k+1)%4]
 line(boundaryPts,0xff3047);
 for(const corner of preliminaryCorners){const marker=new THREE.Mesh(new THREE.SphereGeometry(5,10,8),new THREE.MeshBasicMaterial({color:0xff3047}));marker.position.copy(xyzAt(...corner,5));scene.add(marker);}
 const entrance=new THREE.Mesh(new THREE.SphereGeometry(8,12,10),new THREE.MeshBasicMaterial({color:0x00ffad}));entrance.position.copy(xyzAt(-111.486472,42.2905,8));scene.add(entrance);
+const importedGroup=new THREE.Group();scene.add(importedGroup);
+const importStatus=document.getElementById('importStatus');
+function clearGroup(g){while(g.children.length){const o=g.children[0];g.remove(o);o.geometry?.dispose();o.material?.dispose();}}
+function geoPt(p){if(!Array.isArray(p)||p.length<2||!p.slice(0,2).every(Number.isFinite))throw Error('Invalid coordinate');if(p[0]<d.bounds_wgs84[0]||p[0]>d.bounds_wgs84[2]||p[1]<d.bounds_wgs84[1]||p[1]>d.bounds_wgs84[3])return null;return xyzAt(p[0],p[1],8)}
+function drawLine(arr,closed){const points=arr.map(geoPt).filter(Boolean);if(points.length<2)return 0;const g=new THREE.BufferGeometry().setFromPoints(points);const m=new THREE.LineBasicMaterial({color:0x00d8ff});importedGroup.add(closed?new THREE.LineLoop(g,m):new THREE.Line(g,m));return 1}
+document.getElementById('geoUpload').onchange=async e=>{try{
+ const file=e.target.files?.[0];if(!file)return;
+ const obj=JSON.parse(await file.text());if(obj.type!=='FeatureCollection'||!Array.isArray(obj.features))throw Error('Expected GeoJSON FeatureCollection');
+ if(obj.features.length>500)throw Error('Limit: 500 features per import');
+ clearGroup(importedGroup);let count=0;
+ for(const f of obj.features){const g=f.geometry;if(!g)continue;
+ if(g.type==='Point'){const pt=geoPt(g.coordinates);if(pt){const dot=new THREE.Mesh(new THREE.SphereGeometry(7,8,8),new THREE.MeshBasicMaterial({color:0x00d8ff}));dot.position.copy(pt);importedGroup.add(dot);count++;}}
+ if(g.type==='LineString')count+=drawLine(g.coordinates,false);
+ if(g.type==='Polygon')for(const ring of g.coordinates)count+=drawLine(ring.slice(0,-1),true);
+ }
+ importStatus.textContent=count+' imported feature parts displayed in cyan (unverified). No GitHub upload occurred.';
+}catch(err){importStatus.textContent='Import error: '+err.message}};
+function saveJSON(name,obj){const url=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+document.getElementById('saveView').onclick=()=>saveJSON('lanark-camera-viewpoint.json',{schema:'lanark-camera-v1',source:'user camera in 3D viewer',position_m:camera.position.toArray(),target_m:controls.target.toArray(),center_wgs84:d.center_wgs84,vertical_exaggeration:1});
+document.getElementById('viewUpload').onchange=async e=>{try{const v=JSON.parse(await e.target.files[0].text());if(v.schema!=='lanark-camera-v1'||v.center_wgs84?.join(',')!==d.center_wgs84.join(',')||!Array.isArray(v.position_m)||!Array.isArray(v.target_m)||![...v.position_m,...v.target_m].every(Number.isFinite))throw Error('Incompatible viewpoint');camera.position.fromArray(v.position_m);controls.target.fromArray(v.target_m);controls.update();importStatus.textContent='Saved viewpoint restored.'}catch(err){importStatus.textContent='Viewpoint error: '+err.message}};
+
 try{
  const roadResponse=await fetch('roads.geojson',{cache:'no-store'});
  if(!roadResponse.ok)throw Error('road file '+roadResponse.status);
@@ -74,7 +95,7 @@ try{
 
 
  status.textContent='Measured terrain and preliminary parcel overlay loaded';status.style.color='#98efb5';
- details.textContent='USGS-derived DEM mesh · '+n+' × '+n+' vertices · elevation '+min.toFixed(1)+'–'+max.toFixed(1)+' m. Terrain is planning-grade, not survey-grade.';
+ details.textContent='USGS-derived DEM mesh · '+n+' × '+n+' vertices · elevation '+min.toFixed(1)+'–'+max.toFixed(1)+' m. Terrain is planning-grade, not survey-grade. Road and imagery overlays are visual references.';
 }catch(e){status.textContent='Terrain data not available';details.textContent=e.message+'. The viewer is installed, but no elevation mesh has been verified or published. Do not interpret the empty view as flat terrain.';}
 }
 main();function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
