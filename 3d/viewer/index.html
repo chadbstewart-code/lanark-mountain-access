@@ -20,7 +20,16 @@ try{
  const xyz=[],idx=[];for(const v of vs)xyz.push(v[0],v[1]-min,v[2]);
  for(let i=0;i<n-1;i++)for(let j=0;j<n-1;j++){let a=i*n+j,b=a+1,c=a+n,e=c+1;idx.push(a,c,b,b,c,e)}
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(xyz,3));geo.setIndex(idx);geo.computeVertexNormals();
- const material=new THREE.MeshStandardMaterial({color:'#829878',roughness:1,side:THREE.DoubleSide,flatShading:false});scene.add(new THREE.Mesh(geo,material));
+ const uv=[];for(let i=0;i<n;i++)for(let j=0;j<n;j++)uv.push(j/(n-1),1-i/(n-1));
+ geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+ const material=new THREE.MeshStandardMaterial({color:'#829878',roughness:1,side:THREE.DoubleSide,flatShading:false});
+ const terrainMesh=new THREE.Mesh(geo,material);scene.add(terrainMesh);
+ new THREE.TextureLoader().load('imagery.jpg',texture=>{
+  texture.colorSpace=THREE.SRGBColorSpace;
+  material.map=texture;material.color.set('#ffffff');material.needsUpdate=true;
+  details.textContent+=' Aerial imagery texture loaded (visual reference; not surveyed).';
+ },undefined,()=>{details.textContent+=' Imagery pending: terrain shown in neutral green.';});
+
  extent=Math.max(...vs.map(v=>Math.abs(v[0])),...vs.map(v=>Math.abs(v[2])))*1.5;setView();
 // Preliminary owner GPS boundary, draped over the measured DEM mesh.
 // These are not surveyed corners; do not use this overlay for setbacks or construction.
