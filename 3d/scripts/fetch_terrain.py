@@ -23,7 +23,7 @@ def main():
  out=pathlib.Path(args.output);out.parent.mkdir(parents=True,exist_ok=True)
  params={"bbox":",".join(map(str,args.bbox)),"bboxSR":4326,"imageSR":4326,
          "size":f"{args.size},{args.size}","format":"tiff","pixelType":"F32",
-         "noData":-9999,"interpolation":"+RSP_BilinearInterpolation","f":"image"}
+         "noData":-9999,"interpolation":"RSP_BilinearInterpolation","f":"image"}
  response=requests.get(SERVICE,params=params,timeout=120)
  response.raise_for_status()
  if not(response.content[:4] in (b"II*\x00",b"MM\x00*")):
