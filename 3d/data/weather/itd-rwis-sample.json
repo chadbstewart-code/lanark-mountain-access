@@ -1,0 +1,757 @@
+{
+  "features": [
+    {
+      "attributes": {
+        "basetempc": null,
+        "sensorvaluedatetimelocalzone": "PDT",
+        "griplevelpercent2": null,
+        "griplevelpercent1": 0.82,
+        "snowlayerin1": 0,
+        "snowlayerin2": null,
+        "surfacetempc": 12.9,
+        "waterlayerin1": 0,
+        "waterlayerin2": null,
+        "surfacefriction": null,
+        "surfacetempf": 55.2,
+        "maxwinddirectiondeg": 233,
+        "preciptotalin_1hr": 0,
+        "icelayer1in": 0,
+        "presentweatherdesc": null,
+        "snowheightin": null,
+        "imageposition_2": null,
+        "imageposition_1": null,
+        "windspeedmph": 2.2,
+        "preciptotalin_6hr": 0,
+        "surfacestatecode2": null,
+        "surfacestatecode1": 4,
+        "stationname": "Seasons",
+        "servicelastupdatedutcoffset": "-06:00",
+        "waterthicknessin": null,
+        "imageposition_5": null,
+        "imageposition_4": null,
+        "imageposition_3": null,
+        "presentweathercode": null,
+        "alarmstatuscode2": null,
+        "sensorvaluedatetimeutcoffset": "-07:00",
+        "preciptotalin_12hr": 0,
+        "alarmstatuscode1": 2,
+        "rainstatedesc": "No Precipitation",
+        "basetempf": null,
+        "winddirectiondeg": 191,
+        "stationid": 3017,
+        "rainpresentcode": 0,
+        "cloudstatuscode": null,
+        "eventpreciptotalin": null,
+        "servicelastupdatedutc": 1660249478000,
+        "generalstatusdesc": null,
+        "imageurl_1": "https://birice.vaisala.com/photos/03b8b650_0611c919_cam1.jpg?1617646020",
+        "dewtempf": null,
+        "imageurl_2": "https://birice.vaisala.com/photos/03b8b650_0611c919_cam2.jpg?1617645900",
+        "airtempf": 43.9,
+        "preciptotalin_24hr": 0.2,
+        "dewtempc": null,
+        "pressureinhg": 27.32,
+        "visibilitymile": 1.2,
+        "icelayer2in": null,
+        "imageurl_5": null,
+        "rainstatecode": 1,
+        "imageurl_3": "https://birice.vaisala.com/photos/03b8b650_0611c919_cam3.jpg?1617645720",
+        "sensorvaluedatetimelocal": 1617621300000,
+        "airtempc": 6.6,
+        "imageurl_4": null,
+        "alarmstatusdesc1": "Not in use",
+        "alarmstatusdesc2": null,
+        "generalstatuscode": null,
+        "preciptotalin_3hr": 0,
+        "cloudstatusdesc": null,
+        "subsurfacetempf": 41.9,
+        "maxwindspeedmph": 4.5,
+        "rainpresentdesc": "Rain not detected",
+        "sensorvaluedatetimeutc": 1617646500000,
+        "surfacestatedesc1": "Dry",
+        "relativehumidity": 69,
+        "surfacestatedesc2": null,
+        "rainintensityin_hr": 0,
+        "objectid": 1
+      }
+    },
+    {
+      "attributes": {
+        "basetempc": null,
+        "sensorvaluedatetimelocalzone": "PDT",
+        "griplevelpercent2": 0.82,
+        "griplevelpercent1": 0.82,
+        "snowlayerin1": 0,
+        "snowlayerin2": 0,
+        "surfacetempc": 14,
+        "waterlayerin1": 0,
+        "waterlayerin2": 0,
+        "surfacefriction": null,
+        "surfacetempf": 57.2,
+        "maxwinddirectiondeg": 281,
+        "preciptotalin_1hr": 0,
+        "icelayer1in": 0,
+        "presentweatherdesc": null,
+        "snowheightin": null,
+        "imageposition_2": null,
+        "imageposition_1": null,
+        "windspeedmph": 5.4,
+        "preciptotalin_6hr": 0,
+        "surfacestatecode2": 4,
+        "surfacestatecode1": 4,
+        "stationname": "Railroad Bridge",
+        "servicelastupdatedutcoffset": "-06:00",
+        "waterthicknessin": null,
+        "imageposition_5": null,
+        "imageposition_4": null,
+        "imageposition_3": null,
+        "presentweathercode": null,
+        "alarmstatuscode2": 2,
+        "sensorvaluedatetimeutcoffset": "-07:00",
+        "preciptotalin_12hr": 0,
+        "alarmstatuscode1": 2,
+        "rainstatedesc": "No Precipitation",
+        "basetempf": null,
+        "winddirectiondeg": 242,
+        "stationid": 4436,
+        "rainpresentcode": 0,
+        "cloudstatuscode": null,
+        "eventpreciptotalin": null,
+        "servicelastupdatedutc": 1660249478000,
+        "generalstatusdesc": null,
+        "imageurl_1": "https://birice.vaisala.com/photos/02d808f4_f907768d_cam1.jpg?1617646500",
+        "dewtempf": null,
+        "imageurl_2": "https://birice.vaisala.com/photos/02d808f4_f907768d_cam2.jpg?1617646200",
+        "airtempf": 45.1,
+        "preciptotalin_24hr": 0,
+        "dewtempc": null,
+        "pressureinhg": null,
+        "visibilitymile": 1.2,
+        "icelayer2in": 0,
+        "imageurl_5": null,
+        "rainstatecode": 1,
+        "imageurl_3": "https://birice.vaisala.com/photos/02d808f4_f907768d_cam3.jpg?1617645900",
+        "sensorvaluedatetimelocal": 1617621300000,
+        "airtempc": 7.3,
+        "imageurl_4": null,
+        "alarmstatusdesc1": "Not in use",
+        "alarmstatusdesc2": "Not in use",
+        "generalstatuscode": null,
+        "preciptotalin_3hr": 0,
+        "cloudstatusdesc": null,
+        "subsurfacetempf": 45.3,
+        "maxwindspeedmph": 8.9,
+        "rainpresentdesc": "Rain not detected",
+        "sensorvaluedatetimeutc": 1617646500000,
+        "surfacestatedesc1": "Dry",
+        "relativehumidity": 68,
+        "surfacestatedesc2": "Dry",
+        "rainintensityin_hr": 0,
+        "objectid": 2
+      }
+    },
+    {
+      "attributes": {
+        "basetempc": null,
+        "sensorvaluedatetimelocalzone": "PDT",
+        "griplevelpercent2": null,
+        "griplevelpercent1": 0.82,
+        "snowlayerin1": 0,
+        "snowlayerin2": null,
+        "surfacetempc": 18.2,
+        "waterlayerin1": 0,
+        "waterlayerin2": null,
+        "surfacefriction": null,
+        "surfacetempf": 64.8,
+        "maxwinddirectiondeg": 193,
+        "preciptotalin_1hr": 0,
+        "icelayer1in": 0,
+        "presentweatherdesc": null,
+        "snowheightin": 0,
+        "imageposition_2": null,
+        "imageposition_1": null,
+        "windspeedmph": 0,
+        "preciptotalin_6hr": 0,
+        "surfacestatecode2": null,
+        "surfacestatecode1": 4,
+        "stationname": "Parker Pass",
+        "servicelastupdatedutcoffset": "-06:00",
+        "waterthicknessin": null,
+        "imageposition_5": null,
+        "imageposition_4": null,
+        "imageposition_3": null,
+        "presentweathercode": null,
+        "alarmstatuscode2": null,
+        "sensorvaluedatetimeutcoffset": "-07:00",
+        "preciptotalin_12hr": 0,
+        "alarmstatuscode1": 2,
+        "rainstatedesc": "No Precipitation",
+        "basetempf": null,
+        "winddirectiondeg": 229,
+        "stationid": 9654,
+        "rainpresentcode": 0,
+        "cloudstatuscode": null,
+        "eventpreciptotalin": null,
+        "servicelastupdatedutc": 1660249478000,
+        "generalstatusdesc": null,
+        "imageurl_1": "https://birice.vaisala.com/photos/02D231BA_F90BC1D0_CAM1.jpg?1617646020",
+        "dewtempf": null,
+        "imageurl_2": "https://birice.vaisala.com/photos/02D231BA_F90BC1D0_CAM2.jpg?1617645960",
+        "airtempf": 44.1,
+        "preciptotalin_24hr": 0.1,
+        "dewtempc": null,
+        "pressureinhg": 27.44,
+        "visibilitymile": 1.2,
+        "icelayer2in": null,
+        "imageurl_5": null,
+        "rainstatecode": 1,
+        "imageurl_3": null,
+        "sensorvaluedatetimelocal": 1617621300000,
+        "airtempc": 6.7,
+        "imageurl_4": null,
+        "alarmstatusdesc1": "Not in use",
+        "alarmstatusdesc2": null,
+        "generalstatuscode": null,
+        "preciptotalin_3hr": 0,
+        "cloudstatusdesc": null,
+        "subsurfacetempf": 48.2,
+        "maxwindspeedmph": 0,
+        "rainpresentdesc": "Rain not detected",
+        "sensorvaluedatetimeutc": 1617646500000,
+        "surfacestatedesc1": "Dry",
+        "relativehumidity": 70,
+        "surfacestatedesc2": null,
+        "rainintensityin_hr": 0,
+        "objectid": 3
+      }
+    }
+  ],
+  "exceededTransferLimit": true,
+  "objectIdFieldName": "objectid",
+  "fields": [
+    {
+      "modelName": "OBJECTID",
+      "defaultValue": null,
+      "name": "objectid",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID"
+    },
+    {
+      "modelName": "StationID",
+      "defaultValue": null,
+      "name": "stationid",
+      "alias": "Station ID",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "StationName",
+      "defaultValue": null,
+      "name": "stationname",
+      "length": 30,
+      "alias": "Station Name",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "SensorValueDateTimeUTC",
+      "defaultValue": null,
+      "name": "sensorvaluedatetimeutc",
+      "length": 29,
+      "alias": "Sensor Value Date-Time (UTC)",
+      "type": "esriFieldTypeDate"
+    },
+    {
+      "modelName": "SensorValueDateTimeUTCOffset",
+      "defaultValue": null,
+      "name": "sensorvaluedatetimeutcoffset",
+      "length": 6,
+      "alias": "Sensor Value Date-Time UTC Offset",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "SensorValueDateTimeLocal",
+      "defaultValue": null,
+      "name": "sensorvaluedatetimelocal",
+      "length": 29,
+      "alias": "Sensor Value Date-Time (Local)",
+      "type": "esriFieldTypeDate"
+    },
+    {
+      "modelName": "SensorValueDateTimeLocalZone",
+      "defaultValue": null,
+      "name": "sensorvaluedatetimelocalzone",
+      "length": 3,
+      "alias": "Sensor Value Date-Time Local Timezone",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "GeneralStatusCode",
+      "defaultValue": null,
+      "name": "generalstatuscode",
+      "alias": "General Status Code",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "GeneralStatusDesc",
+      "defaultValue": null,
+      "name": "generalstatusdesc",
+      "length": 11,
+      "alias": "General Status Description",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "AirTempF",
+      "defaultValue": null,
+      "name": "airtempf",
+      "alias": "Air Temperature (F)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "AirTempC",
+      "defaultValue": null,
+      "name": "airtempc",
+      "alias": "Air Temperature (C)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "DewTempF",
+      "defaultValue": null,
+      "name": "dewtempf",
+      "alias": "Dew Temperature (F)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "DewTempC",
+      "defaultValue": null,
+      "name": "dewtempc",
+      "alias": "Dew Temperature (C)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "BaseTempF",
+      "defaultValue": null,
+      "name": "basetempf",
+      "alias": "Base Temperature (F)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "BaseTempC",
+      "defaultValue": null,
+      "name": "basetempc",
+      "alias": "Base Temperature (C)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "PressureINHg",
+      "defaultValue": null,
+      "name": "pressureinhg",
+      "alias": "Pressure (IN Hg)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "RelativeHumidity",
+      "defaultValue": null,
+      "name": "relativehumidity",
+      "alias": "Relative Humidity (%)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "IceLayer1IN",
+      "defaultValue": null,
+      "name": "icelayer1in",
+      "alias": "Ice Layer 1 (Inch)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "IceLayer2IN",
+      "defaultValue": null,
+      "name": "icelayer2in",
+      "alias": "Ice Layer 2 (Inch)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "GripLevelPercent1",
+      "defaultValue": null,
+      "name": "griplevelpercent1",
+      "alias": "Grip Level Percentage (1)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "GripLevelPercent2",
+      "defaultValue": null,
+      "name": "griplevelpercent2",
+      "alias": "Grip Level Percentage (2)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "PresentWeatherCode",
+      "defaultValue": null,
+      "name": "presentweathercode",
+      "alias": "Present Weather Code",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "PresentWeatherDesc",
+      "defaultValue": null,
+      "name": "presentweatherdesc",
+      "length": 150,
+      "alias": "Present Weather Description",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "RainPresentCode",
+      "defaultValue": null,
+      "name": "rainpresentcode",
+      "alias": "Rain Present Code",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "RainPresentDesc",
+      "defaultValue": null,
+      "name": "rainpresentdesc",
+      "length": 20,
+      "alias": "Rain Present Description",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "RainIntensityIN_HR",
+      "defaultValue": null,
+      "name": "rainintensityin_hr",
+      "alias": "Rain Intensity (Inches/Hour)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "RainStateCode",
+      "defaultValue": null,
+      "name": "rainstatecode",
+      "alias": "Rain State Code",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "RainStateDesc",
+      "defaultValue": null,
+      "name": "rainstatedesc",
+      "length": 40,
+      "alias": "Rain State Description",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "EventPrecipTotalIN",
+      "defaultValue": null,
+      "name": "eventpreciptotalin",
+      "alias": "Event Precipitation Total (Inches)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "PrecipTotalIN_1HR",
+      "defaultValue": null,
+      "name": "preciptotalin_1hr",
+      "alias": "Precipitation Total Last 1 Hour (Inches)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "PrecipTotalIN_3HR",
+      "defaultValue": null,
+      "name": "preciptotalin_3hr",
+      "alias": "Precipitation Total Last 3 Hours (Inches)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "PrecipTotalIN_6HR",
+      "defaultValue": null,
+      "name": "preciptotalin_6hr",
+      "alias": "Precipitation Total Last 6 Hours (Inches)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "PrecipTotalIN_12HR",
+      "defaultValue": null,
+      "name": "preciptotalin_12hr",
+      "alias": "Precipitation Total Last 12 Hours (Inches)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "PrecipTotalIN_24HR",
+      "defaultValue": null,
+      "name": "preciptotalin_24hr",
+      "alias": "Precipitation Total Last 24 Hours (Inches)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "SnowHeightIN",
+      "defaultValue": null,
+      "name": "snowheightin",
+      "alias": "Snow Height Off Roadway (Inches)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "SnowLayerIN1",
+      "defaultValue": null,
+      "name": "snowlayerin1",
+      "alias": "Snow Layer 1 (Inch)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "SnowLayerIN2",
+      "defaultValue": null,
+      "name": "snowlayerin2",
+      "alias": "Snow Layer 2 (Inch)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "SurfaceTempF",
+      "defaultValue": null,
+      "name": "surfacetempf",
+      "alias": "Surface Temperature (F)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "SurfaceTempC",
+      "defaultValue": null,
+      "name": "surfacetempc",
+      "alias": "Surface Temperature (C)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "SurfaceStateCode1",
+      "defaultValue": null,
+      "name": "surfacestatecode1",
+      "alias": "Surface State Code (1)",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "SurfaceStateDesc1",
+      "defaultValue": null,
+      "name": "surfacestatedesc1",
+      "length": 40,
+      "alias": "Surface State Description (1)",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "SurfaceStateCode2",
+      "defaultValue": null,
+      "name": "surfacestatecode2",
+      "alias": "Surface State Code (2)",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "SurfaceStateDesc2",
+      "defaultValue": null,
+      "name": "surfacestatedesc2",
+      "length": 40,
+      "alias": "Surface State Description (2)",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "SurfaceFriction",
+      "defaultValue": null,
+      "name": "surfacefriction",
+      "length": 20,
+      "alias": "Surface Friction",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "SubSurfaceTempF",
+      "defaultValue": null,
+      "name": "subsurfacetempf",
+      "alias": "Sub-Surface Temp (F)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "VisibilityMile",
+      "defaultValue": null,
+      "name": "visibilitymile",
+      "alias": "Visibility (Miles)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "WindDirectionDeg",
+      "defaultValue": null,
+      "name": "winddirectiondeg",
+      "alias": "Wind Direction Degree (Average)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "MaxWindDirectionDeg",
+      "defaultValue": null,
+      "name": "maxwinddirectiondeg",
+      "alias": "Wind Direction Degree (Gust)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "WindSpeedMPH",
+      "defaultValue": null,
+      "name": "windspeedmph",
+      "alias": "Average Wind Speed (MPH)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "MaxWindSpeedMPH",
+      "defaultValue": null,
+      "name": "maxwindspeedmph",
+      "alias": "Wind Speed (Gust) (MPH)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "CloudStatusCode",
+      "defaultValue": null,
+      "name": "cloudstatuscode",
+      "alias": "Cloud Status Code",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "CloudStatusDesc",
+      "defaultValue": null,
+      "name": "cloudstatusdesc",
+      "length": 25,
+      "alias": "Cloud Status Description",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "WaterLayerIN1",
+      "defaultValue": null,
+      "name": "waterlayerin1",
+      "alias": "Water Layer (Inches) (1)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "WaterLayerIN2",
+      "defaultValue": null,
+      "name": "waterlayerin2",
+      "alias": "Water Layer (Inches) (2)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "WaterThicknessIN",
+      "defaultValue": null,
+      "name": "waterthicknessin",
+      "alias": "Water Thickness (Inches)",
+      "type": "esriFieldTypeDouble"
+    },
+    {
+      "modelName": "ImageURL_1",
+      "defaultValue": null,
+      "name": "imageurl_1",
+      "length": 254,
+      "alias": "RWIS Image Camera 1",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ImagePosition_1",
+      "defaultValue": null,
+      "name": "imageposition_1",
+      "length": 20,
+      "alias": "RWIS Image Camera 1 Position",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ImageURL_2",
+      "defaultValue": null,
+      "name": "imageurl_2",
+      "length": 254,
+      "alias": "RWIS Image Camera 2",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ImagePosition_2",
+      "defaultValue": null,
+      "name": "imageposition_2",
+      "length": 20,
+      "alias": "RWIS Image Camera 2 Position",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ImageURL_3",
+      "defaultValue": null,
+      "name": "imageurl_3",
+      "length": 254,
+      "alias": "RWIS Image Camera 3",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ImagePosition_3",
+      "defaultValue": null,
+      "name": "imageposition_3",
+      "length": 20,
+      "alias": "RWIS Image Camera 3 Position",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ImageURL_4",
+      "defaultValue": null,
+      "name": "imageurl_4",
+      "length": 254,
+      "alias": "RWIS Image Camera 4",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ImagePosition_4",
+      "defaultValue": null,
+      "name": "imageposition_4",
+      "length": 20,
+      "alias": "RWIS Image Camera 4 Position",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ImageURL_5",
+      "defaultValue": null,
+      "name": "imageurl_5",
+      "length": 254,
+      "alias": "RWIS Image Camera 5",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ImagePosition_5",
+      "defaultValue": null,
+      "name": "imageposition_5",
+      "length": 20,
+      "alias": "RWIS Image Camera 5 Position",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "AlarmStatusCode1",
+      "defaultValue": null,
+      "name": "alarmstatuscode1",
+      "alias": "Alarm Status Code (1)",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "AlarmStatusDesc1",
+      "defaultValue": null,
+      "name": "alarmstatusdesc1",
+      "length": 15,
+      "alias": "Alarm Status Description (1)",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "AlarmStatusCode2",
+      "defaultValue": null,
+      "name": "alarmstatuscode2",
+      "alias": "Alarm Status Code (2)",
+      "type": "esriFieldTypeInteger"
+    },
+    {
+      "modelName": "AlarmStatusDesc2",
+      "defaultValue": null,
+      "name": "alarmstatusdesc2",
+      "length": 15,
+      "alias": "Alarm Status Description (2)",
+      "type": "esriFieldTypeString"
+    },
+    {
+      "modelName": "ServiceLastUpdatedUTC",
+      "defaultValue": null,
+      "name": "servicelastupdatedutc",
+      "length": 29,
+      "alias": "Feature Service Last Updated (UTC)",
+      "type": "esriFieldTypeDate"
+    },
+    {
+      "modelName": "ServiceLastUpdatedUTCOffset",
+      "defaultValue": null,
+      "name": "servicelastupdatedutcoffset",
+      "length": 6,
+      "alias": "Feature Service Last UpdatedOffset",
+      "type": "esriFieldTypeString"
+    }
+  ]
+}

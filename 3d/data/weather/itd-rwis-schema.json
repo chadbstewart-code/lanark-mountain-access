@@ -1,0 +1,365 @@
+{
+  "retrieved_utc": "2026-10-31T22:59:17.999863+00:00",
+  "service": "https://gisp.itd.idaho.gov/hosting/rest/services/Hosted/RWIS_HistoricData/FeatureServer/0",
+  "record_count_unverified": true,
+  "fields": [
+    {
+      "name": "objectid",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID"
+    },
+    {
+      "name": "stationid",
+      "type": "esriFieldTypeInteger",
+      "alias": "Station ID"
+    },
+    {
+      "name": "stationname",
+      "type": "esriFieldTypeString",
+      "alias": "Station Name"
+    },
+    {
+      "name": "sensorvaluedatetimeutc",
+      "type": "esriFieldTypeDate",
+      "alias": "Sensor Value Date-Time (UTC)"
+    },
+    {
+      "name": "sensorvaluedatetimeutcoffset",
+      "type": "esriFieldTypeString",
+      "alias": "Sensor Value Date-Time UTC Offset"
+    },
+    {
+      "name": "sensorvaluedatetimelocal",
+      "type": "esriFieldTypeDate",
+      "alias": "Sensor Value Date-Time (Local)"
+    },
+    {
+      "name": "sensorvaluedatetimelocalzone",
+      "type": "esriFieldTypeString",
+      "alias": "Sensor Value Date-Time Local Timezone"
+    },
+    {
+      "name": "generalstatuscode",
+      "type": "esriFieldTypeInteger",
+      "alias": "General Status Code"
+    },
+    {
+      "name": "generalstatusdesc",
+      "type": "esriFieldTypeString",
+      "alias": "General Status Description"
+    },
+    {
+      "name": "airtempf",
+      "type": "esriFieldTypeDouble",
+      "alias": "Air Temperature (F)"
+    },
+    {
+      "name": "airtempc",
+      "type": "esriFieldTypeDouble",
+      "alias": "Air Temperature (C)"
+    },
+    {
+      "name": "dewtempf",
+      "type": "esriFieldTypeDouble",
+      "alias": "Dew Temperature (F)"
+    },
+    {
+      "name": "dewtempc",
+      "type": "esriFieldTypeDouble",
+      "alias": "Dew Temperature (C)"
+    },
+    {
+      "name": "basetempf",
+      "type": "esriFieldTypeDouble",
+      "alias": "Base Temperature (F)"
+    },
+    {
+      "name": "basetempc",
+      "type": "esriFieldTypeDouble",
+      "alias": "Base Temperature (C)"
+    },
+    {
+      "name": "pressureinhg",
+      "type": "esriFieldTypeDouble",
+      "alias": "Pressure (IN Hg)"
+    },
+    {
+      "name": "relativehumidity",
+      "type": "esriFieldTypeDouble",
+      "alias": "Relative Humidity (%)"
+    },
+    {
+      "name": "icelayer1in",
+      "type": "esriFieldTypeDouble",
+      "alias": "Ice Layer 1 (Inch)"
+    },
+    {
+      "name": "icelayer2in",
+      "type": "esriFieldTypeDouble",
+      "alias": "Ice Layer 2 (Inch)"
+    },
+    {
+      "name": "griplevelpercent1",
+      "type": "esriFieldTypeDouble",
+      "alias": "Grip Level Percentage (1)"
+    },
+    {
+      "name": "griplevelpercent2",
+      "type": "esriFieldTypeDouble",
+      "alias": "Grip Level Percentage (2)"
+    },
+    {
+      "name": "presentweathercode",
+      "type": "esriFieldTypeInteger",
+      "alias": "Present Weather Code"
+    },
+    {
+      "name": "presentweatherdesc",
+      "type": "esriFieldTypeString",
+      "alias": "Present Weather Description"
+    },
+    {
+      "name": "rainpresentcode",
+      "type": "esriFieldTypeInteger",
+      "alias": "Rain Present Code"
+    },
+    {
+      "name": "rainpresentdesc",
+      "type": "esriFieldTypeString",
+      "alias": "Rain Present Description"
+    },
+    {
+      "name": "rainintensityin_hr",
+      "type": "esriFieldTypeDouble",
+      "alias": "Rain Intensity (Inches/Hour)"
+    },
+    {
+      "name": "rainstatecode",
+      "type": "esriFieldTypeInteger",
+      "alias": "Rain State Code"
+    },
+    {
+      "name": "rainstatedesc",
+      "type": "esriFieldTypeString",
+      "alias": "Rain State Description"
+    },
+    {
+      "name": "eventpreciptotalin",
+      "type": "esriFieldTypeDouble",
+      "alias": "Event Precipitation Total (Inches)"
+    },
+    {
+      "name": "preciptotalin_1hr",
+      "type": "esriFieldTypeDouble",
+      "alias": "Precipitation Total Last 1 Hour (Inches)"
+    },
+    {
+      "name": "preciptotalin_3hr",
+      "type": "esriFieldTypeDouble",
+      "alias": "Precipitation Total Last 3 Hours (Inches)"
+    },
+    {
+      "name": "preciptotalin_6hr",
+      "type": "esriFieldTypeDouble",
+      "alias": "Precipitation Total Last 6 Hours (Inches)"
+    },
+    {
+      "name": "preciptotalin_12hr",
+      "type": "esriFieldTypeDouble",
+      "alias": "Precipitation Total Last 12 Hours (Inches)"
+    },
+    {
+      "name": "preciptotalin_24hr",
+      "type": "esriFieldTypeDouble",
+      "alias": "Precipitation Total Last 24 Hours (Inches)"
+    },
+    {
+      "name": "snowheightin",
+      "type": "esriFieldTypeDouble",
+      "alias": "Snow Height Off Roadway (Inches)"
+    },
+    {
+      "name": "snowlayerin1",
+      "type": "esriFieldTypeDouble",
+      "alias": "Snow Layer 1 (Inch)"
+    },
+    {
+      "name": "snowlayerin2",
+      "type": "esriFieldTypeDouble",
+      "alias": "Snow Layer 2 (Inch)"
+    },
+    {
+      "name": "surfacetempf",
+      "type": "esriFieldTypeDouble",
+      "alias": "Surface Temperature (F)"
+    },
+    {
+      "name": "surfacetempc",
+      "type": "esriFieldTypeDouble",
+      "alias": "Surface Temperature (C)"
+    },
+    {
+      "name": "surfacestatecode1",
+      "type": "esriFieldTypeInteger",
+      "alias": "Surface State Code (1)"
+    },
+    {
+      "name": "surfacestatedesc1",
+      "type": "esriFieldTypeString",
+      "alias": "Surface State Description (1)"
+    },
+    {
+      "name": "surfacestatecode2",
+      "type": "esriFieldTypeInteger",
+      "alias": "Surface State Code (2)"
+    },
+    {
+      "name": "surfacestatedesc2",
+      "type": "esriFieldTypeString",
+      "alias": "Surface State Description (2)"
+    },
+    {
+      "name": "surfacefriction",
+      "type": "esriFieldTypeString",
+      "alias": "Surface Friction"
+    },
+    {
+      "name": "subsurfacetempf",
+      "type": "esriFieldTypeDouble",
+      "alias": "Sub-Surface Temp (F)"
+    },
+    {
+      "name": "visibilitymile",
+      "type": "esriFieldTypeDouble",
+      "alias": "Visibility (Miles)"
+    },
+    {
+      "name": "winddirectiondeg",
+      "type": "esriFieldTypeDouble",
+      "alias": "Wind Direction Degree (Average)"
+    },
+    {
+      "name": "maxwinddirectiondeg",
+      "type": "esriFieldTypeDouble",
+      "alias": "Wind Direction Degree (Gust)"
+    },
+    {
+      "name": "windspeedmph",
+      "type": "esriFieldTypeDouble",
+      "alias": "Average Wind Speed (MPH)"
+    },
+    {
+      "name": "maxwindspeedmph",
+      "type": "esriFieldTypeDouble",
+      "alias": "Wind Speed (Gust) (MPH)"
+    },
+    {
+      "name": "cloudstatuscode",
+      "type": "esriFieldTypeInteger",
+      "alias": "Cloud Status Code"
+    },
+    {
+      "name": "cloudstatusdesc",
+      "type": "esriFieldTypeString",
+      "alias": "Cloud Status Description"
+    },
+    {
+      "name": "waterlayerin1",
+      "type": "esriFieldTypeDouble",
+      "alias": "Water Layer (Inches) (1)"
+    },
+    {
+      "name": "waterlayerin2",
+      "type": "esriFieldTypeDouble",
+      "alias": "Water Layer (Inches) (2)"
+    },
+    {
+      "name": "waterthicknessin",
+      "type": "esriFieldTypeDouble",
+      "alias": "Water Thickness (Inches)"
+    },
+    {
+      "name": "imageurl_1",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 1"
+    },
+    {
+      "name": "imageposition_1",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 1 Position"
+    },
+    {
+      "name": "imageurl_2",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 2"
+    },
+    {
+      "name": "imageposition_2",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 2 Position"
+    },
+    {
+      "name": "imageurl_3",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 3"
+    },
+    {
+      "name": "imageposition_3",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 3 Position"
+    },
+    {
+      "name": "imageurl_4",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 4"
+    },
+    {
+      "name": "imageposition_4",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 4 Position"
+    },
+    {
+      "name": "imageurl_5",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 5"
+    },
+    {
+      "name": "imageposition_5",
+      "type": "esriFieldTypeString",
+      "alias": "RWIS Image Camera 5 Position"
+    },
+    {
+      "name": "alarmstatuscode1",
+      "type": "esriFieldTypeInteger",
+      "alias": "Alarm Status Code (1)"
+    },
+    {
+      "name": "alarmstatusdesc1",
+      "type": "esriFieldTypeString",
+      "alias": "Alarm Status Description (1)"
+    },
+    {
+      "name": "alarmstatuscode2",
+      "type": "esriFieldTypeInteger",
+      "alias": "Alarm Status Code (2)"
+    },
+    {
+      "name": "alarmstatusdesc2",
+      "type": "esriFieldTypeString",
+      "alias": "Alarm Status Description (2)"
+    },
+    {
+      "name": "servicelastupdatedutc",
+      "type": "esriFieldTypeDate",
+      "alias": "Feature Service Last Updated (UTC)"
+    },
+    {
+      "name": "servicelastupdatedutcoffset",
+      "type": "esriFieldTypeString",
+      "alias": "Feature Service Last UpdatedOffset"
+    }
+  ],
+  "time_info": null,
+  "capabilities": "Query",
+  "object_id_field": "objectid"
+}
