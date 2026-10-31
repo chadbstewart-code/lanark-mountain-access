@@ -1,6 +1,10 @@
 name: Inspect Idaho mountain wind archive
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '3d/scripts/inspect_wind_archive.py'
+      - '.github/workflows/inspect-lanark-wind.yml'
 permissions:
   contents: write
 jobs:
