@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D Terrain Explorer</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px;max-height:80vh;overflow:auto}select{font:inherit;padding:6px;max-width:100%}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · 3D Terrain Explorer</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><label>Wind scenario (direction wind comes FROM) <select id="windDirection"><option value="none">Off</option><option value="W">W — west</option><option value="WNW">WNW — west-northwest</option><option value="SW">SW — southwest</option><option value="NW">NW — northwest</option><option value="E">E — east</option></select></label><small id="windNote">Select a direction to display illustrative flow arrows. No modeled speed reductions.</small></p><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D Terrain Explorer</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px;max-height:80vh;overflow:auto}select{font:inherit;padding:6px;max-width:100%}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · 3D Terrain Explorer</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><label>Wind scenario (direction wind comes FROM) <select id="windDirection"><option value="W" selected>W — west (default)</option><option value="none">Off</option><option value="WNW">WNW — west-northwest</option><option value="SW">SW — southwest</option><option value="NW">NW — northwest</option><option value="E">E — east</option></select></label><small id="windNote" style="font-weight:bold;color:#9cdbff">Blue arrows show the selected wind flow. W → E is selected by default; arrows are illustrative, not measured.</small></p><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 const status=document.querySelector('#status'), details=document.querySelector('#details'), holder=document.querySelector('#view');
@@ -61,22 +61,23 @@ function setWindScenario(direction){
  const bearing=windBearings[direction]*Math.PI/180;
  // Geographic wind FROM bearing. World X=east, world Z=south.
  const east=-Math.sin(bearing),south=Math.cos(bearing);
- const length=105;
- for(let ix=-2;ix<=2;ix++)for(let iz=-2;iz<=2;iz++){
-  const x=ix*130,z=iz*130;
+ const length=170;
+ for(let ix=-3;ix<=3;ix++)for(let iz=-3;iz<=3;iz++){
+  const x=ix*115,z=iz*115;
   const lon=d.center_wgs84[0]+x/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180));
   const lat=d.center_wgs84[1]-z/111132;
-  const start=xyzAt(lon,lat,24);
+  const start=xyzAt(lon,lat,65);
   const endLon=lon+east*length/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180));
   const endLat=lat-south*length/111132;
-  const end=xyzAt(endLon,endLat,24);
+  const end=xyzAt(endLon,endLat,65);
   const delta=new THREE.Vector3().subVectors(end,start);
-  const arrow=new THREE.ArrowHelper(delta.clone().normalize(),start,delta.length(),0x4bc3ff,25,12);
+  const arrow=new THREE.ArrowHelper(delta.clone().normalize(),start,delta.length(),0x008bff,38,21);
   windGroup.add(arrow);
  }
  note.textContent=direction+' wind scenario: blue arrows indicate flow toward the downwind direction. This is directional visualization only—not measured wind speed, shelter or tree effects.';
 }
 document.getElementById('windDirection').onchange=e=>setWindScenario(e.target.value);
+setWindScenario(document.getElementById('windDirection').value);
 
 const importStatus=document.getElementById('importStatus');
 function clearGroup(g){while(g.children.length){const o=g.children[0];g.remove(o);o.geometry?.dispose();o.material?.dispose();}}
