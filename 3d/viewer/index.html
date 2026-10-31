@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D Terrain Explorer</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · 3D Terrain Explorer</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><a href="../../index.html">Return to 2D map</a></p></div><script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
+const status=document.querySelector('#status'), details=document.querySelector('#details'), holder=document.querySelector('#view');
+const scene=new THREE.Scene();scene.background=new THREE.Color('#b4c6d3');
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,1,30000);camera.position.set(1000,900,1300);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));holder.append(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x566577,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(500,1300,600);scene.add(sun);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI*.495;
+let extent=1200;
+function setView(top=false){camera.position.set(top?0:extent*.8,top?extent*1.6:extent*.75,top?0:extent*1.1);controls.target.set(0,0,0);controls.update()}
+document.querySelector('#reset').onclick=()=>setView(false);document.querySelector('#top').onclick=()=>setView(true);document.querySelector('#oblique').onclick=()=>setView(false);
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+function line(points,color){const geo=new THREE.BufferGeometry().setFromPoints(points);scene.add(new THREE.Line(new THREE.LineLoop(geo,new THREE.LineBasicMaterial({color,linewidth:2}))))}
+async function main(){
+try{
+ const res=await fetch('terrain.json',{cache:'no-store'});if(!res.ok)throw Error('terrain.json has not been published ('+res.status+')');
+ const d=await res.json();if(d.measured!==true||!Array.isArray(d.vertices_m)||d.grid<8||d.vertices_m.length!==d.grid*d.grid)throw Error('Measured terrain mesh failed validation');
+ const n=d.grid,vs=d.vertices_m,heights=vs.map(v=>v[1]);const min=Math.min(...heights),max=Math.max(...heights);
+ const xyz=[],idx=[];for(const v of vs)xyz.push(v[0],v[1]-min,v[2]);
+ for(let i=0;i<n-1;i++)for(let j=0;j<n-1;j++){let a=i*n+j,b=a+1,c=a+n,e=c+1;idx.push(a,c,b,b,c,e)}
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(xyz,3));geo.setIndex(idx);geo.computeVertexNormals();
+ const material=new THREE.MeshStandardMaterial({color:'#829878',roughness:1,side:THREE.DoubleSide,flatShading:false});scene.add(new THREE.Mesh(geo,material));
+ extent=Math.max(...vs.map(v=>Math.abs(v[0])),...vs.map(v=>Math.abs(v[2])))*1.5;setView();
+ status.textContent='Measured terrain loaded';status.style.color='#98efb5';
+ details.textContent='USGS-derived DEM mesh · '+n+' × '+n+' vertices · elevation '+min.toFixed(1)+'–'+max.toFixed(1)+' m. Terrain is planning-grade, not survey-grade.';
+}catch(e){status.textContent='Terrain data not available';details.textContent=e.message+'. The viewer is installed, but no elevation mesh has been verified or published. Do not interpret the empty view as flat terrain.';}
+}
+main();function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
+</script></body></html>
