@@ -26,3 +26,6 @@
 - Idaho local land use law: https://legislature.idaho.gov/statutesrules/idstat/Title67/T67CH65/
 
 **Status:** Concept and verification checklist only. No county approval, buildable cabin count, subdivision exemption or legal ownership structure established.
+
+## Owner clarification — 2026-10-31
+Primary intent is **private use by a fixed group of owners/families**. A legitimate business/guest ranch operation is an alternative **only if it offers a clearer lawful approval path**. Do not represent private recreational cabins as a dude ranch without satisfying the county's actual operating definition. Compare (1) private multi-cabin shared LLC use, (2) lawful group recreational lodging, (3) genuine commercial guest/dude ranch. Seek county written land-use classification before selecting title or exclusive use agreements. Verify currently adopted ordinances; county is drafting 2026 updates.
