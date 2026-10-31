@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "project": "Lanark Parcel 21 3D",
+  "updated": "2026-10-31",
+  "parcel_pin": "RP13S43E185400",
+  "source_policy": "Originals preserved, interpretations versioned, confidence explicit",
+  "sources": [
+    {
+      "id": "county-parcel-popup",
+      "type": "county_gis_screenshot",
+      "date": "2026-10-31",
+      "description": "PIN and 55.75 acre confirmation",
+      "verification": "parcel identity verified; geometry not exported"
+    },
+    {
+      "id": "lanark-concept-2008",
+      "type": "concept_survey_pdf",
+      "description": "2008 Lanark Concept, Parcel 21; recorded status unknown",
+      "verification": "reference only"
+    },
+    {
+      "id": "owner-aerial-2025-06-04",
+      "type": "oblique_photo_and_video",
+      "description": "Southwest-to-northeast aerial, owner-marked approximate four corners, additional flight video",
+      "verification": "not georeferenced",
+      "availability": "conversation attachment; not archived in GitHub"
+    },
+    {
+      "id": "usgs-3dep",
+      "type": "elevation_model",
+      "url": "https://www.usgs.gov/3d-elevation-program",
+      "verification": "source identified; DEM not downloaded"
+    },
+    {
+      "id": "geofabrik-idaho-2026-10-29",
+      "type": "road_network",
+      "verification": "geometry embedded in existing 2D map; road legality and difficulty not established"
+    }
+  ]
+}
