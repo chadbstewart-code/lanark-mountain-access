@@ -1,0 +1,17 @@
+{
+  "retrieved_utc": "2026-10-31T23:01:39.588592+00:00",
+  "source": "https://gisp.itd.idaho.gov/hosting/rest/services/Hosted/RWIS_HistoricData/FeatureServer/0/query",
+  "search": "UPPER(stationname) LIKE '%EMIGR%'",
+  "stations": [
+    {
+      "stationname": "Emigration Canyon",
+      "stationid": 10021,
+      "records": 46920,
+      "coverage": {
+        "gust_values": 46733,
+        "last_utc": 1660247040000,
+        "first_utc": 1617646500000
+      }
+    }
+  ]
+}
