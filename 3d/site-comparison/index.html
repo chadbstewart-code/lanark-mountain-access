@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D — Site A vs B Comparison</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px;max-height:80vh;overflow:auto}select{font:inherit;padding:6px;max-width:100%}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · A/B Wind Shelter Comparison</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><label>Wind scenario (direction wind comes FROM) <select id="windDirection"><option value="W" selected>FROM W → toward E (default)</option><option value="none">Off</option><option value="WNW">FROM WNW → toward ESE</option><option value="SW">FROM SW → toward NE</option><option value="NW">FROM NW → toward SE</option><option value="E">FROM E → toward W</option></select></label><label><input id="exposureOn" type="checkbox" checked> Terrain shelter heatmap</label><label><input id="arrowsOn" type="checkbox"> Show wind arrows</label><small id="exposureLegend">Blue-green = stronger terrain shelter · orange-red = exposed. Relative screening index, not wind speed.</small><small id="windNote" style="font-weight:bold;color:#9cdbff">Blue arrows show the selected wind flow. W → E is selected by default; arrows are illustrative, not measured.</small></p><p><strong>Candidate shelter sites</strong><small>Choose A or B, then click its location on the terrain. The screenshot circles have not been georeferenced.</small><button id="pickA">Pin A (red)</button><button id="pickB">Pin B (green)</button><button id="compare">Compare all directions</button><button id="weighted">Storm-weighted comparison</button><small id="siteResult">Neither site has verified coordinates.</small><button id="exportSites">Export site coordinates</button></p><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D — Site A vs B Comparison</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px;max-height:80vh;overflow:auto}select{font:inherit;padding:6px;max-width:100%}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · A/B Wind Shelter Comparison</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><label>Wind scenario (direction wind comes FROM) <select id="windDirection"><option value="W" selected>FROM W → toward E (default)</option><option value="none">Off</option><option value="WNW">FROM WNW → toward ESE</option><option value="SW">FROM SW → toward NE</option><option value="NW">FROM NW → toward SE</option><option value="E">FROM E → toward W</option></select></label><label><input id="exposureOn" type="checkbox" checked> Terrain shelter heatmap</label><label><input id="arrowsOn" type="checkbox"> Show wind arrows</label><small id="exposureLegend">Blue-green = stronger terrain shelter · orange-red = exposed. Relative screening index, not wind speed.</small><small id="windNote" style="font-weight:bold;color:#9cdbff">Blue arrows show the selected wind flow. W → E is selected by default; arrows are illustrative, not measured.</small></p><p><strong>Candidate shelter sites</strong><small>Choose A or B, then click its location on the terrain. The screenshot circles have not been georeferenced.</small><button id="pickA">Pin A (red)</button><button id="pickB">Pin B (green)</button><button id="compare">Compare all directions</button><button id="weighted">Storm-weighted comparison</button><small id="siteResult">Neither site has verified coordinates.</small><button id="exportSites">Export site coordinates</button><hr><strong>Tree-line survey (provisional)</strong><small>Click Start tree line, then click successive points on the terrain along the conifer stand. End when finished. This is a manually traced hypothesis, not lidar-measured canopy.</small><p><button id="startTrees">Start tree line</button><button id="endTrees">Finish line</button><button id="clearTrees">Clear line</button></p><label>Assumed canopy height <select id="treeHeight"><option value="30">30 ft</option><option value="50" selected>50 ft</option><option value="70">70 ft</option></select></label><button id="treeCompare">Compare tree-line geometry</button><button id="exportTrees">Export provisional tree line</button><small id="treeResult">No tree line traced. Height is a scenario, not a measurement.</small></p><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 const status=document.querySelector('#status'), details=document.querySelector('#details'), holder=document.querySelector('#view');
@@ -126,6 +126,17 @@ setWindScenario(windSelect.value);
 
 // Candidate pins are selected by clicking measured terrain. Never infer coordinates from screenshot pixels.
 const candidateSites={A:null,B:null},siteMarkers={},siteResult=document.getElementById('siteResult');
+const treePoints=[],treeGroup=new THREE.Group();scene.add(treeGroup);let drawingTrees=false;
+const treeResult=document.getElementById('treeResult');
+function redrawTrees(){while(treeGroup.children.length){let o=treeGroup.children[0];treeGroup.remove(o);o.geometry?.dispose();o.material?.dispose();}
+ for(const p of treePoints){let dot=new THREE.Mesh(new THREE.SphereGeometry(7,8,8),new THREE.MeshBasicMaterial({color:0xf2ed4b}));dot.position.copy(p.world);treeGroup.add(dot);}
+ if(treePoints.length>1)treeGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(treePoints.map(p=>p.world)),new THREE.LineBasicMaterial({color:0xf2ed4b})));
+ treeResult.textContent=treePoints.length+' provisional tree-line points. '+(drawingTrees?'Click additional points, then Finish line.':'Select assumed height and compare.');
+}
+document.getElementById('startTrees').onclick=()=>{activeSite=null;drawingTrees=true;treeResult.textContent='Click the terrain to trace the conifer stand.';};
+document.getElementById('endTrees').onclick=()=>{drawingTrees=false;redrawTrees();};
+document.getElementById('clearTrees').onclick=()=>{treePoints.length=0;drawingTrees=false;redrawTrees();};
+
 let activeSite=null,pressX=0,pressY=0;
 const picker=new THREE.Raycaster(),pointer=new THREE.Vector2();
 for(const id of ['A','B'])document.getElementById('pick'+id).onclick=()=>{
@@ -133,13 +144,14 @@ for(const id of ['A','B'])document.getElementById('pick'+id).onclick=()=>{
 };
 renderer.domElement.addEventListener('pointerdown',e=>{pressX=e.clientX;pressY=e.clientY});
 renderer.domElement.addEventListener('pointerup',e=>{
- if(!activeSite||Math.hypot(e.clientX-pressX,e.clientY-pressY)>6)return;
+ if((!activeSite&&!drawingTrees)||Math.hypot(e.clientX-pressX,e.clientY-pressY)>6)return;
  const rect=renderer.domElement.getBoundingClientRect();
  pointer.set(((e.clientX-rect.left)/rect.width)*2-1,-((e.clientY-rect.top)/rect.height)*2+1);
  picker.setFromCamera(pointer,camera);
  const hit=picker.intersectObject(terrainMesh,false)[0];
  if(!hit){siteResult.textContent='No terrain intersection. Try another location.';return;}
  const p=hit.point,lat=d.center_wgs84[1]-p.z/111132,lon=d.center_wgs84[0]+p.x/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180));
+ if(drawingTrees){treePoints.push({lon,lat,world:p.clone().add(new THREE.Vector3(0,12,0))});redrawTrees();return;}
  candidateSites[activeSite]={lon,lat,elevation_m:p.y+min,position:[p.x,p.z]};
  if(siteMarkers[activeSite])scene.remove(siteMarkers[activeSite]);
  const marker=new THREE.Mesh(new THREE.SphereGeometry(12,14,12),new THREE.MeshBasicMaterial({color:activeSite==='A'?0xff2e45:0x40ff90}));
@@ -180,6 +192,39 @@ document.getElementById('weighted').onclick=()=>{
  }
  siteResult.style.whiteSpace='pre-line';
  siteResult.textContent='STORM-WEIGHTED TERRAIN SCREENING (NOT wind-speed reduction)\nA: '+(sumA*100).toFixed(1)+'/100 · B: '+(sumB*100).toFixed(1)+'/100\n'+lines.join('\n')+'\nWeights: ITD Emigration Canyon station 10021, 2021–2022, gust >= 22.6 mph. Wind direction during gust observations, not instantaneous gust bearing. No trees, turbulence, on-site winds, or construction suitability. Scores are exploratory.';
+};
+// Windbreak geometric screening: no actual wind-speed reduction is asserted.
+function distToSegment(px,pz,a,b){const dx=b.world.x-a.world.x,dz=b.world.z-a.world.z,t=Math.max(0,Math.min(1,((px-a.world.x)*dx+(pz-a.world.z)*dz)/(dx*dx+dz*dz||1)));return Math.hypot(px-(a.world.x+t*dx),pz-(a.world.z+t*dz));}
+function treeScenario(site,dir,height){
+ const theta=windBearings[dir]*Math.PI/180;
+ const ux=Math.sin(theta),uz=-Math.cos(theta); // direction FROM
+ const x=site.position[0],z=site.position[1];
+ let nearest=Infinity;
+ for(let k=0;k<treePoints.length-1;k++){
+  const a=treePoints[k],b=treePoints[k+1];
+  // Closest point on line segment, in world horizontal coordinates
+  const dx=b.world.x-a.world.x,dz=b.world.z-a.world.z;
+  const t=Math.max(0,Math.min(1,((x-a.world.x)*dx+(z-a.world.z)*dz)/(dx*dx+dz*dz||1)));
+  const tx=a.world.x+t*dx,tz=a.world.z+t*dz;
+  const vx=tx-x,vz=tz-z,along=vx*ux+vz*uz,cross=Math.abs(vx*uz-vz*ux);
+  if(along>0&&cross<=Math.max(20,height*.45))nearest=Math.min(nearest,along);
+ }
+ return nearest===Infinity?null:{distance_m:nearest,multiple:nearest/height};
+}
+document.getElementById('treeCompare').onclick=()=>{
+ if(!candidateSites.A||!candidateSites.B){treeResult.textContent='Pin A and B first.';return;}
+ if(treePoints.length<2){treeResult.textContent='Trace at least two tree-line points first.';return;}
+ const height=Number(document.getElementById('treeHeight').value)*.3048,dirs=['W','NW','SW','E'],lines=[];
+ for(const dir of dirs){
+  const values=['A','B'].map(id=>{const r=treeScenario(candidateSites[id],dir,height);return id+': '+(r?r.multiple.toFixed(1)+'H upwind':'no aligned upwind stand')});
+  lines.push(dir+' → '+values.join(' · '));
+ }
+ treeResult.style.whiteSpace='pre-line';
+ treeResult.textContent='Assumed height '+(height/.3048).toFixed(0)+' ft; H=tree height.\n'+lines.join('\n')+'\nGeometric screening ONLY. Tree stand porosity, canopy height, terrain-induced turbulence and measured speed reduction unknown.';
+};
+document.getElementById('exportTrees').onclick=()=>{
+ if(treePoints.length<2){treeResult.textContent='Trace at least two points before export.';return;}
+ saveJSON('lanark-tree-line-PRELIMINARY.geojson',{type:'FeatureCollection',features:[{type:'Feature',geometry:{type:'LineString',coordinates:treePoints.map(p=>[p.lon,p.lat])},properties:{name:'Owner-marked conifer stand (manual trace)',status:'UNVERIFIED',canopy_height_scenario_ft:Number(document.getElementById('treeHeight').value),height_measured:false}}]});
 };
 document.getElementById('exportSites').onclick=()=>{
  const features=Object.entries(candidateSites).filter(([id,s])=>s).map(([id,s])=>({type:'Feature',geometry:{type:'Point',coordinates:[s.lon,s.lat]},properties:{name:'Candidate '+id,elevation_m:s.elevation_m,status:'provisional click-position; not surveyed'}}));
