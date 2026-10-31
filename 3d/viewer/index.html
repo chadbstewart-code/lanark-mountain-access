@@ -11,7 +11,7 @@ let extent=1200;
 function setView(top=false){camera.position.set(top?0:extent*.8,top?extent*1.6:extent*.75,top?0:extent*1.1);controls.target.set(0,0,0);controls.update()}
 document.querySelector('#reset').onclick=()=>setView(false);document.querySelector('#top').onclick=()=>setView(true);document.querySelector('#oblique').onclick=()=>setView(false);
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-function line(points,color){const geo=new THREE.BufferGeometry().setFromPoints(points);scene.add(new THREE.Line(new THREE.LineLoop(geo,new THREE.LineBasicMaterial({color,linewidth:2}))))}
+function line(points,color){const geo=new THREE.BufferGeometry().setFromPoints(points);scene.add(new THREE.LineLoop(geo,new THREE.LineBasicMaterial({color,linewidth:2})));}
 async function main(){
 try{
  const res=await fetch('terrain.json',{cache:'no-store'});if(!res.ok)throw Error('terrain.json has not been published ('+res.status+')');
@@ -123,7 +123,7 @@ try{
 
  status.textContent='Measured terrain and preliminary parcel overlay loaded';status.style.color='#98efb5';
  details.textContent='USGS-derived DEM mesh · '+n+' × '+n+' vertices · elevation '+min.toFixed(1)+'–'+max.toFixed(1)+' m. Terrain is planning-grade, not survey-grade. Road and imagery overlays are visual references.';
-}catch(e){status.textContent='Terrain data not available';details.textContent=e.message+'. The viewer is installed, but no elevation mesh has been verified or published. Do not interpret the empty view as flat terrain.';}
+}catch(e){status.textContent='Terrain data not available';details.textContent='Viewer error: '+e.message+' (see browser console for stack).';console.error('Lanark viewer failure',e);}
 }
 main();function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
 </script></body></html>
