@@ -1,0 +1,18 @@
+{
+  "type": "FeatureCollection",
+  "name": "Proposed cabins, not yet placed",
+  "features": [],
+  "properties": {
+    "target_count_range": [
+      4,
+      8
+    ],
+    "illustrative_footprint_ft": [
+      16,
+      20
+    ],
+    "preferred_layout": "compact cul-de-sac to minimize shared water lines",
+    "status": "NO SITES SELECTED",
+    "warning": "Terrain, zoning, septic, well and fire access not yet verified"
+  }
+}
