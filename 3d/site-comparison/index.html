@@ -1,0 +1,215 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D — Site A vs B Comparison</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px;max-height:80vh;overflow:auto}select{font:inherit;padding:6px;max-width:100%}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · A/B Wind Shelter Comparison</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><label>Wind scenario (direction wind comes FROM) <select id="windDirection"><option value="W" selected>FROM W → toward E (default)</option><option value="none">Off</option><option value="WNW">FROM WNW → toward ESE</option><option value="SW">FROM SW → toward NE</option><option value="NW">FROM NW → toward SE</option><option value="E">FROM E → toward W</option></select></label><label><input id="exposureOn" type="checkbox" checked> Terrain shelter heatmap</label><label><input id="arrowsOn" type="checkbox"> Show wind arrows</label><small id="exposureLegend">Blue-green = stronger terrain shelter · orange-red = exposed. Relative screening index, not wind speed.</small><small id="windNote" style="font-weight:bold;color:#9cdbff">Blue arrows show the selected wind flow. W → E is selected by default; arrows are illustrative, not measured.</small></p><p><strong>Candidate shelter sites</strong><small>Choose A or B, then click its location on the terrain. The screenshot circles have not been georeferenced.</small><button id="pickA">Pin A (red)</button><button id="pickB">Pin B (green)</button><button id="compare">Compare all directions</button><small id="siteResult">Neither site has verified coordinates.</small><button id="exportSites">Export site coordinates</button></p><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
+const status=document.querySelector('#status'), details=document.querySelector('#details'), holder=document.querySelector('#view');
+const scene=new THREE.Scene();scene.background=new THREE.Color('#b4c6d3');
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,1,30000);camera.position.set(1000,900,1300);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));holder.append(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x566577,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(500,1300,600);scene.add(sun);
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.maxPolarAngle=Math.PI*.495;
+let extent=1200;
+function setView(top=false){camera.position.set(top?0:extent*.8,top?extent*1.6:extent*.75,top?0:extent*1.1);controls.target.set(0,0,0);controls.update()}
+document.querySelector('#reset').onclick=()=>setView(false);document.querySelector('#top').onclick=()=>setView(true);document.querySelector('#oblique').onclick=()=>setView(false);
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+function line(points,color){const geo=new THREE.BufferGeometry().setFromPoints(points);scene.add(new THREE.LineLoop(geo,new THREE.LineBasicMaterial({color,linewidth:2})));}
+async function main(){
+try{
+ const res=await fetch('../viewer/terrain.json',{cache:'no-store'});if(!res.ok)throw Error('terrain.json has not been published ('+res.status+')');
+ const d=await res.json();if(d.measured!==true||!Array.isArray(d.vertices_m)||d.grid<8||d.vertices_m.length!==d.grid*d.grid)throw Error('Measured terrain mesh failed validation');
+ const n=d.grid,vs=d.vertices_m,heights=vs.map(v=>v[1]);const min=Math.min(...heights),max=Math.max(...heights);
+ const xyz=[],idx=[];for(const v of vs)xyz.push(v[0],v[1]-min,v[2]);
+ for(let i=0;i<n-1;i++)for(let j=0;j<n-1;j++){let a=i*n+j,b=a+1,c=a+n,e=c+1;idx.push(a,c,b,b,c,e)}
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(xyz,3));geo.setIndex(idx);geo.computeVertexNormals();
+ const uv=[];for(let i=0;i<n;i++)for(let j=0;j<n;j++)uv.push(j/(n-1),1-i/(n-1));
+ geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+ const material=new THREE.MeshStandardMaterial({color:'#829878',roughness:1,side:THREE.DoubleSide,flatShading:false});
+ const terrainMesh=new THREE.Mesh(geo,material);scene.add(terrainMesh);
+ const heatGeo=geo.clone();const heatColors=new Float32Array(n*n*3);heatGeo.setAttribute('color',new THREE.BufferAttribute(heatColors,3));const heatMat=new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:.68,depthWrite:false,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2});const heatMesh=new THREE.Mesh(heatGeo,heatMat);heatMesh.position.y=2.5;scene.add(heatMesh);
+ new THREE.TextureLoader().load('../viewer/imagery.jpg',texture=>{
+  texture.colorSpace=THREE.SRGBColorSpace;
+  material.map=texture;material.color.set('#ffffff');material.needsUpdate=true;
+  details.textContent+=' Aerial imagery texture loaded (visual reference; not surveyed).';
+ },undefined,()=>{details.textContent+=' Imagery pending: terrain shown in neutral green.';});
+
+ extent=Math.max(...vs.map(v=>Math.abs(v[0])),...vs.map(v=>Math.abs(v[2])))*1.5;setView();
+// Preliminary owner GPS boundary, draped over the measured DEM mesh.
+// These are not surveyed corners; do not use this overlay for setbacks or construction.
+const preliminaryCorners=[[-111.486556,42.292444],[-111.478639,42.292333],[-111.478806,42.289194],[-111.486500,42.289194]];
+function surfaceAt(lon,lat){
+ const [west,south,east,north]=d.bounds_wgs84;
+ const u=Math.max(0,Math.min(n-1,(lon-west)/(east-west)*(n-1)));
+ const v=Math.max(0,Math.min(n-1,(north-lat)/(north-south)*(n-1)));
+ const j=Math.min(n-2,Math.floor(u)),i=Math.min(n-2,Math.floor(v)),a=u-j,b=v-i;
+ const z=(r,c)=>vs[r*n+c][1];
+ return (1-a)*(1-b)*z(i,j)+a*(1-b)*z(i,j+1)+(1-a)*b*z(i+1,j)+a*b*z(i+1,j+1)-min;
+}
+function xyzAt(lon,lat,offset=3){
+ const [west,south,east,north]=d.bounds_wgs84;
+ return new THREE.Vector3((lon-d.center_wgs84[0])*111320*Math.cos(d.center_wgs84[1]*Math.PI/180),surfaceAt(lon,lat)+offset,(d.center_wgs84[1]-lat)*111132);
+}
+const importedGroup=new THREE.Group();scene.add(importedGroup);
+function clearGroup(g){while(g.children.length){const o=g.children[0];g.remove(o);o.geometry?.dispose();o.material?.dispose();}}
+let parcelFailure=null;
+try {
+const boundaryPts=[];
+for(let k=0;k<4;k++){const a=preliminaryCorners[k],b=preliminaryCorners[(k+1)%4];for(let step=0;step<32;step++){let t=step/32;boundaryPts.push(xyzAt(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t));}}
+line(boundaryPts,0xff3047);
+for(const corner of preliminaryCorners){const marker=new THREE.Mesh(new THREE.SphereGeometry(5,10,8),new THREE.MeshBasicMaterial({color:0xff3047}));marker.position.copy(xyzAt(...corner,5));scene.add(marker);}
+const entrance=new THREE.Mesh(new THREE.SphereGeometry(8,12,10),new THREE.MeshBasicMaterial({color:0x00ffad}));entrance.position.copy(xyzAt(-111.486472,42.2905,8));scene.add(entrance);
+}catch(err){parcelFailure=err;console.error('Parcel overlay error',err);}
+let windFailure=null;
+let shelterFunction=null;
+try {
+const windGroup=new THREE.Group();scene.add(windGroup);
+const windBearings={W:270,WNW:292.5,SW:225,NW:315,E:90};
+const windSelect=document.getElementById('windDirection');
+const exposureToggle=document.getElementById('exposureOn');
+const arrowsToggle=document.getElementById('arrowsOn');
+const [west,south,east,north]=d.bounds_wgs84;
+const dx=Math.abs(vs[1][0]-vs[0][0]),dz=Math.abs(vs[n][2]-vs[0][2]);
+function bilinear(row,col){
+ if(row<0||col<0||row>=n-1||col>=n-1)return null;
+ const i=Math.floor(row),j=Math.floor(col),a=col-j,b=row-i;
+ const h=(r,c)=>vs[r*n+c][1];
+ return (1-a)*(1-b)*h(i,j)+a*(1-b)*h(i,j+1)+(1-a)*b*h(i+1,j)+a*b*h(i+1,j+1);
+}
+function terrainIndex(direction){
+ const bearing=windBearings[direction]*Math.PI/180;
+ // Unit vector pointing UPWIND: X east, Z south
+ const ux=Math.sin(bearing),uz=-Math.cos(bearing);
+ const steps=[60,120,180,250,350,500];const indices=new Float32Array(n*n);
+ for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+  const h=vs[i*n+j][1];let horizon=-.2,valid=0;
+  for(const dist of steps){
+   const row=i+uz*dist/dz,col=j+ux*dist/dx;
+   const upstream=bilinear(row,col);
+   if(upstream===null)continue;
+   horizon=Math.max(horizon,(upstream-h)/dist);valid++;
+  }
+  // Higher upwind terrain = greater potential topographic shelter.
+  // Negative horizon / no upstream ridge = more exposed. This is NOT CFD.
+  indices[i*n+j]=valid?Math.max(0,Math.min(1,(horizon+.04)/.27)):0;
+ }
+ return indices;
+}
+shelterFunction=terrainIndex;
+const palette=[new THREE.Color('#df5c35'),new THREE.Color('#f2bc5c'),new THREE.Color('#6cb9a0'),new THREE.Color('#2679b8')];
+function applyExposure(direction){
+ heatMesh.visible=exposureToggle.checked&&direction!=='none';
+ if(direction==='none'){document.getElementById('windNote').textContent='Select an incoming wind direction.';return;}
+ const values=terrainIndex(direction),colors=heatGeo.getAttribute('color');
+ for(let k=0;k<values.length;k++){
+  const t=values[k]*3,seg=Math.min(2,Math.floor(t)),blend=t-seg;
+  const c=palette[seg].clone().lerp(palette[seg+1],blend);
+  colors.setXYZ(k,c.r,c.g,c.b);
+ }
+ colors.needsUpdate=true;
+ document.getElementById('windNote').textContent='Wind FROM '+direction+' (meteorological direction): colors represent potential terrain shelter from higher ground UPWIND, evaluated at 60–500 m. Tree shelter is NOT yet modeled. No wind-speed reduction or storm-safety claim.';
+}
+function setWindScenario(direction){
+ clearGroup(windGroup);
+ applyExposure(direction);
+ if(direction==='none'||!arrowsToggle.checked)return;
+ const bearing=windBearings[direction]*Math.PI/180;
+ const eastward=-Math.sin(bearing),southward=Math.cos(bearing);
+ for(let ix=-3;ix<=3;ix++)for(let iz=-3;iz<=3;iz++){
+  const x=ix*115,z=iz*115,lon=d.center_wgs84[0]+x/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180)),lat=d.center_wgs84[1]-z/111132;
+  const start=xyzAt(lon,lat,65),end=xyzAt(lon+eastward*170/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180)),lat-southward*170/111132,65);
+  const delta=end.clone().sub(start);windGroup.add(new THREE.ArrowHelper(delta.clone().normalize(),start,delta.length(),0x008bff,38,21));
+ }
+}
+windSelect.onchange=()=>setWindScenario(windSelect.value);
+exposureToggle.onchange=()=>setWindScenario(windSelect.value);
+arrowsToggle.onchange=()=>setWindScenario(windSelect.value);
+setWindScenario(windSelect.value);
+}catch(err){windFailure=err;console.error('Wind shelter overlay error',err);}
+
+// Candidate pins are selected by clicking measured terrain. Never infer coordinates from screenshot pixels.
+const candidateSites={A:null,B:null},siteMarkers={},siteResult=document.getElementById('siteResult');
+let activeSite=null,pressX=0,pressY=0;
+const picker=new THREE.Raycaster(),pointer=new THREE.Vector2();
+for(const id of ['A','B'])document.getElementById('pick'+id).onclick=()=>{
+ activeSite=id;siteResult.textContent='Click the terrain to position Site '+id+'; this is a provisional planning point.';
+};
+renderer.domElement.addEventListener('pointerdown',e=>{pressX=e.clientX;pressY=e.clientY});
+renderer.domElement.addEventListener('pointerup',e=>{
+ if(!activeSite||Math.hypot(e.clientX-pressX,e.clientY-pressY)>6)return;
+ const rect=renderer.domElement.getBoundingClientRect();
+ pointer.set(((e.clientX-rect.left)/rect.width)*2-1,-((e.clientY-rect.top)/rect.height)*2+1);
+ picker.setFromCamera(pointer,camera);
+ const hit=picker.intersectObject(terrainMesh,false)[0];
+ if(!hit){siteResult.textContent='No terrain intersection. Try another location.';return;}
+ const p=hit.point,lat=d.center_wgs84[1]-p.z/111132,lon=d.center_wgs84[0]+p.x/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180));
+ candidateSites[activeSite]={lon,lat,elevation_m:p.y+min,position:[p.x,p.z]};
+ if(siteMarkers[activeSite])scene.remove(siteMarkers[activeSite]);
+ const marker=new THREE.Mesh(new THREE.SphereGeometry(12,14,12),new THREE.MeshBasicMaterial({color:activeSite==='A'?0xff2e45:0x40ff90}));
+ marker.position.copy(p).add(new THREE.Vector3(0,15,0));scene.add(marker);siteMarkers[activeSite]=marker;
+ siteResult.textContent='Site '+activeSite+': '+lat.toFixed(6)+', '+lon.toFixed(6)+' · elevation '+(p.y+min).toFixed(1)+' m. Pin provisional.';
+ activeSite=null;
+});
+document.getElementById('compare').onclick=()=>{
+ if(!candidateSites.A||!candidateSites.B){siteResult.textContent='Pin both A and B on the terrain first.';return;}
+ if(!shelterFunction){siteResult.textContent='Shelter algorithm unavailable; check viewer diagnostics.';return;}
+ const dirs=['W','WNW','SW','NW','E'];
+ function score(site,values){
+  const x=(site.lon-d.bounds_wgs84[0])/(d.bounds_wgs84[2]-d.bounds_wgs84[0])*(n-1);
+  const y=(d.bounds_wgs84[3]-site.lat)/(d.bounds_wgs84[3]-d.bounds_wgs84[1])*(n-1);
+  const i=Math.max(0,Math.min(n-1,Math.round(y))),j=Math.max(0,Math.min(n-1,Math.round(x)));
+  return Math.round(values[i*n+j]*100);
+ }
+ const rows=dirs.map(dir=>{const values=shelterFunction(dir);return dir+': A '+score(candidateSites.A,values)+'/100 · B '+score(candidateSites.B,values)+'/100'}).join('\n');
+ siteResult.textContent='Directional terrain-only shelter index (higher = more upwind terrain; NOT predicted wind reduction):\n'+rows+'\nNo canopy, gust or turbulence effects modeled.';
+ siteResult.style.whiteSpace='pre-line';
+};
+document.getElementById('exportSites').onclick=()=>{
+ const features=Object.entries(candidateSites).filter(([id,s])=>s).map(([id,s])=>({type:'Feature',geometry:{type:'Point',coordinates:[s.lon,s.lat]},properties:{name:'Candidate '+id,elevation_m:s.elevation_m,status:'provisional click-position; not surveyed'}}));
+ if(!features.length){siteResult.textContent='Pin at least one site before export.';return;}
+ saveJSON('lanark-candidate-sites-PRELIMINARY.geojson',{type:'FeatureCollection',features});
+};
+const importStatus=document.getElementById('importStatus');
+function geoPt(p){if(!Array.isArray(p)||p.length<2||!p.slice(0,2).every(Number.isFinite))throw Error('Invalid coordinate');if(p[0]<d.bounds_wgs84[0]||p[0]>d.bounds_wgs84[2]||p[1]<d.bounds_wgs84[1]||p[1]>d.bounds_wgs84[3])return null;return xyzAt(p[0],p[1],8)}
+function drawLine(arr,closed){const points=arr.map(geoPt).filter(Boolean);if(points.length<2)return 0;const g=new THREE.BufferGeometry().setFromPoints(points);const m=new THREE.LineBasicMaterial({color:0x00d8ff});importedGroup.add(closed?new THREE.LineLoop(g,m):new THREE.Line(g,m));return 1}
+document.getElementById('geoUpload').onchange=async e=>{try{
+ const file=e.target.files?.[0];if(!file)return;
+ const obj=JSON.parse(await file.text());if(obj.type!=='FeatureCollection'||!Array.isArray(obj.features))throw Error('Expected GeoJSON FeatureCollection');
+ if(obj.features.length>500)throw Error('Limit: 500 features per import');
+ clearGroup(importedGroup);let count=0;
+ for(const f of obj.features){const g=f.geometry;if(!g)continue;
+ if(g.type==='Point'){const pt=geoPt(g.coordinates);if(pt){const dot=new THREE.Mesh(new THREE.SphereGeometry(7,8,8),new THREE.MeshBasicMaterial({color:0x00d8ff}));dot.position.copy(pt);importedGroup.add(dot);count++;}}
+ if(g.type==='LineString')count+=drawLine(g.coordinates,false);
+ if(g.type==='Polygon')for(const ring of g.coordinates)count+=drawLine(ring.slice(0,-1),true);
+ }
+ importStatus.textContent=count+' imported feature parts displayed in cyan (unverified). No GitHub upload occurred.';
+}catch(err){importStatus.textContent='Import error: '+err.message}};
+function saveJSON(name,obj){const url=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+document.getElementById('saveView').onclick=()=>saveJSON('lanark-camera-viewpoint.json',{schema:'lanark-camera-v1',source:'user camera in 3D viewer',position_m:camera.position.toArray(),target_m:controls.target.toArray(),center_wgs84:d.center_wgs84,vertical_exaggeration:1});
+document.getElementById('viewUpload').onchange=async e=>{try{const v=JSON.parse(await e.target.files[0].text());if(v.schema!=='lanark-camera-v1'||v.center_wgs84?.join(',')!==d.center_wgs84.join(',')||!Array.isArray(v.position_m)||!Array.isArray(v.target_m)||![...v.position_m,...v.target_m].every(Number.isFinite))throw Error('Incompatible viewpoint');camera.position.fromArray(v.position_m);controls.target.fromArray(v.target_m);controls.update();importStatus.textContent='Saved viewpoint restored.'}catch(err){importStatus.textContent='Viewpoint error: '+err.message}};
+
+try{
+ const roadResponse=await fetch('../viewer/roads.geojson',{cache:'no-store'});
+ if(!roadResponse.ok)throw Error('road file '+roadResponse.status);
+ const roadData=await roadResponse.json();let roadCount=0;
+ for(const feature of roadData.features){
+  const coords=feature.geometry?.coordinates;
+  if(feature.geometry?.type!=='LineString'||!Array.isArray(coords)||coords.length<2)continue;
+  const segments=[];let current=[];
+  for(const pt of coords){
+   if(pt[0]>=d.bounds_wgs84[0]&&pt[0]<=d.bounds_wgs84[2]&&pt[1]>=d.bounds_wgs84[1]&&pt[1]<=d.bounds_wgs84[3]){
+    current.push(xyzAt(pt[0],pt[1],4));
+   }else if(current.length){if(current.length>1)segments.push(current);current=[];}
+  }
+  if(current.length>1)segments.push(current);
+  const cat=feature.properties?.category||'road';
+  const color=cat==='trail'?0xb04cff:cat==='track'?0xffc542:0x16c784;
+  for(const points of segments){scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color})));roadCount++;}
+ }
+ details.textContent+=' '+roadCount+' mapped road/trail pieces draped (OSM categories, not legal access or difficulty).';
+}catch(roadError){details.textContent+=' Road overlay unavailable: '+roadError.message;}
+
+
+ status.textContent='Measured terrain loaded';status.style.color='#98efb5';
+ details.textContent='USGS mesh '+n+'×'+n+' · elevation '+min.toFixed(1)+'–'+max.toFixed(1)+' m. Parcel overlay: '+(parcelFailure?'ERROR '+parcelFailure.message:'loaded')+'. Wind overlay: '+(windFailure?'ERROR '+windFailure.message:'initialized')+'.';
+}catch(e){status.textContent='Terrain data not available';details.textContent='Viewer error: '+e.message+' (see browser console for stack).';console.error('Lanark viewer failure',e);}
+}
+main();function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
+</script></body></html>
