@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D Terrain Explorer</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px;max-height:80vh;overflow:auto}select{font:inherit;padding:6px;max-width:100%}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · 3D Terrain Explorer</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><label>Wind scenario (direction wind comes FROM) <select id="windDirection"><option value="W" selected>W — west (default)</option><option value="none">Off</option><option value="WNW">WNW — west-northwest</option><option value="SW">SW — southwest</option><option value="NW">NW — northwest</option><option value="E">E — east</option></select></label><small id="windNote" style="font-weight:bold;color:#9cdbff">Blue arrows show the selected wind flow. W → E is selected by default; arrows are illustrative, not measured.</small></p><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lanark 3D Terrain Explorer</title><style>body{margin:0;background:#111b24;color:#eef;font:14px system-ui}#view{position:fixed;inset:0}#ui{position:absolute;top:12px;left:12px;background:#14232ce8;border:1px solid #52616a;border-radius:12px;padding:12px;max-width:310px;max-height:80vh;overflow:auto}select{font:inherit;padding:6px;max-width:100%}button{margin:4px;padding:8px;border:1px solid #778a98;background:#223847;color:white;border-radius:6px}#status{font-weight:700;color:#ffd38c}small{display:block;color:#c1cbd1;line-height:1.4}a{color:#bde7ff}</style></head><body><div id="view"></div><div id="ui"><strong>Lanark · 3D Terrain Explorer</strong><p id="status">Loading measured terrain…</p><small id="details">Source: USGS 3DEP. No synthetic terrain will be displayed.</small><p><label>Wind scenario (direction wind comes FROM) <select id="windDirection"><option value="W" selected>W — west (default)</option><option value="none">Off</option><option value="WNW">WNW — west-northwest</option><option value="SW">SW — southwest</option><option value="NW">NW — northwest</option><option value="E">E — east</option></select></label><label><input id="exposureOn" type="checkbox" checked> Terrain shelter heatmap</label><label><input id="arrowsOn" type="checkbox"> Show wind arrows</label><small id="exposureLegend">Blue-green = stronger terrain shelter · orange-red = exposed. Relative screening index, not wind speed.</small><small id="windNote" style="font-weight:bold;color:#9cdbff">Blue arrows show the selected wind flow. W → E is selected by default; arrows are illustrative, not measured.</small></p><p><button id="reset">Reset view</button><button id="top">Top view</button><button id="oblique">Oblique view</button></p><small>Drag to orbit · scroll/pinch to zoom. Preliminary parcel boundary is not a survey. No cabin sites are approved.</small><p><label>Import your KML-derived GeoJSON <input id="geoUpload" type="file" accept=".geojson,.json,application/geo+json"></label><small id="importStatus">No imported features. Use the Google Earth Exchange tool to convert KML first.</small></p><p><button id="saveView">Export camera viewpoint</button><label>Load viewpoint JSON <input id="viewUpload" type="file" accept=".json,application/json"></label></p><p><a href="../google-earth/">Google Earth Exchange</a> · <a href="../../index.html">2D map</a></p></div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script><script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 const status=document.querySelector('#status'), details=document.querySelector('#details'), holder=document.querySelector('#view');
@@ -24,6 +24,7 @@ try{
  geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
  const material=new THREE.MeshStandardMaterial({color:'#829878',roughness:1,side:THREE.DoubleSide,flatShading:false});
  const terrainMesh=new THREE.Mesh(geo,material);scene.add(terrainMesh);
+ const heatGeo=geo.clone();const heatColors=new Float32Array(n*n*3);heatGeo.setAttribute('color',new THREE.BufferAttribute(heatColors,3));const heatMat=new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:.68,depthWrite:false,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2});const heatMesh=new THREE.Mesh(heatGeo,heatMat);heatMesh.position.y=2.5;scene.add(heatMesh);
  new THREE.TextureLoader().load('imagery.jpg',texture=>{
   texture.colorSpace=THREE.SRGBColorSpace;
   material.map=texture;material.color.set('#ffffff');material.needsUpdate=true;
@@ -60,32 +61,66 @@ let windFailure=null;
 try {
 const windGroup=new THREE.Group();scene.add(windGroup);
 const windBearings={W:270,WNW:292.5,SW:225,NW:315,E:90};
+const windSelect=document.getElementById('windDirection');
+const exposureToggle=document.getElementById('exposureOn');
+const arrowsToggle=document.getElementById('arrowsOn');
+const [west,south,east,north]=d.bounds_wgs84;
+const dx=Math.abs(vs[1][0]-vs[0][0]),dz=Math.abs(vs[n][2]-vs[0][2]);
+function bilinear(row,col){
+ if(row<0||col<0||row>=n-1||col>=n-1)return null;
+ const i=Math.floor(row),j=Math.floor(col),a=col-j,b=row-i;
+ const h=(r,c)=>vs[r*n+c][1];
+ return (1-a)*(1-b)*h(i,j)+a*(1-b)*h(i,j+1)+(1-a)*b*h(i+1,j)+a*b*h(i+1,j+1);
+}
+function terrainIndex(direction){
+ const bearing=windBearings[direction]*Math.PI/180;
+ // Unit vector pointing UPWIND: X east, Z south
+ const ux=Math.sin(bearing),uz=-Math.cos(bearing);
+ const steps=[60,120,180,250,350,500];const indices=new Float32Array(n*n);
+ for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+  const h=vs[i*n+j][1];let horizon=-.2,valid=0;
+  for(const dist of steps){
+   const row=i+uz*dist/dz,col=j+ux*dist/dx;
+   const upstream=bilinear(row,col);
+   if(upstream===null)continue;
+   horizon=Math.max(horizon,(upstream-h)/dist);valid++;
+  }
+  // Higher upwind terrain = greater potential topographic shelter.
+  // Negative horizon / no upstream ridge = more exposed. This is NOT CFD.
+  indices[i*n+j]=valid?Math.max(0,Math.min(1,(horizon+.04)/.27)):0;
+ }
+ return indices;
+}
+const palette=[new THREE.Color('#df5c35'),new THREE.Color('#f2bc5c'),new THREE.Color('#6cb9a0'),new THREE.Color('#2679b8')];
+function applyExposure(direction){
+ heatMesh.visible=exposureToggle.checked&&direction!=='none';
+ if(direction==='none'){document.getElementById('windNote').textContent='Select an incoming wind direction.';return;}
+ const values=terrainIndex(direction),colors=heatGeo.getAttribute('color');
+ for(let k=0;k<values.length;k++){
+  const t=values[k]*3,seg=Math.min(2,Math.floor(t)),blend=t-seg;
+  const c=palette[seg].clone().lerp(palette[seg+1],blend);
+  colors.setXYZ(k,c.r,c.g,c.b);
+ }
+ colors.needsUpdate=true;
+ document.getElementById('windNote').textContent=direction+' scenario: colors represent potential terrain shelter from higher ground UPWIND, evaluated at 60–500 m. Tree shelter is NOT yet modeled. No wind-speed reduction or storm-safety claim.';
+}
 function setWindScenario(direction){
  clearGroup(windGroup);
- const note=document.getElementById('windNote');
- if(direction==='none'){note.textContent='Wind overlay off. Wind data not yet validated at parcel level.';return;}
+ applyExposure(direction);
+ if(direction==='none'||!arrowsToggle.checked)return;
  const bearing=windBearings[direction]*Math.PI/180;
- // Geographic wind FROM bearing. World X=east, world Z=south.
- const east=-Math.sin(bearing),south=Math.cos(bearing);
- const length=170;
+ const eastward=-Math.sin(bearing),southward=Math.cos(bearing);
  for(let ix=-3;ix<=3;ix++)for(let iz=-3;iz<=3;iz++){
-  const x=ix*115,z=iz*115;
-  const lon=d.center_wgs84[0]+x/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180));
-  const lat=d.center_wgs84[1]-z/111132;
-  const start=xyzAt(lon,lat,65);
-  const endLon=lon+east*length/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180));
-  const endLat=lat-south*length/111132;
-  const end=xyzAt(endLon,endLat,65);
-  const delta=new THREE.Vector3().subVectors(end,start);
-  const arrow=new THREE.ArrowHelper(delta.clone().normalize(),start,delta.length(),0x008bff,38,21);
-  windGroup.add(arrow);
+  const x=ix*115,z=iz*115,lon=d.center_wgs84[0]+x/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180)),lat=d.center_wgs84[1]-z/111132;
+  const start=xyzAt(lon,lat,65),end=xyzAt(lon+eastward*170/(111320*Math.cos(d.center_wgs84[1]*Math.PI/180)),lat-southward*170/111132,65);
+  const delta=end.clone().sub(start);windGroup.add(new THREE.ArrowHelper(delta.clone().normalize(),start,delta.length(),0x008bff,38,21));
  }
- note.textContent=direction+' wind scenario: blue arrows indicate flow toward the downwind direction. This is directional visualization only—not measured wind speed, shelter or tree effects.';
 }
-document.getElementById('windDirection').onchange=e=>setWindScenario(e.target.value);
-setWindScenario(document.getElementById('windDirection').value);
-
-}catch(err){windFailure=err;console.error('Wind overlay error',err);}
+windSelect.onchange=()=>setWindScenario(windSelect.value);
+exposureToggle.onchange=()=>setWindScenario(windSelect.value);
+arrowsToggle.onchange=()=>setWindScenario(windSelect.value);
+setWindScenario(windSelect.value);
+}catch(err){windFailure=err;console.error('Wind shelter overlay error',err);}
 const importStatus=document.getElementById('importStatus');
 function geoPt(p){if(!Array.isArray(p)||p.length<2||!p.slice(0,2).every(Number.isFinite))throw Error('Invalid coordinate');if(p[0]<d.bounds_wgs84[0]||p[0]>d.bounds_wgs84[2]||p[1]<d.bounds_wgs84[1]||p[1]>d.bounds_wgs84[3])return null;return xyzAt(p[0],p[1],8)}
 function drawLine(arr,closed){const points=arr.map(geoPt).filter(Boolean);if(points.length<2)return 0;const g=new THREE.BufferGeometry().setFromPoints(points);const m=new THREE.LineBasicMaterial({color:0x00d8ff});importedGroup.add(closed?new THREE.LineLoop(g,m):new THREE.Line(g,m));return 1}
