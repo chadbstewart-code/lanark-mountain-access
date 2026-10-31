@@ -22,7 +22,28 @@ try{
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(xyz,3));geo.setIndex(idx);geo.computeVertexNormals();
  const material=new THREE.MeshStandardMaterial({color:'#829878',roughness:1,side:THREE.DoubleSide,flatShading:false});scene.add(new THREE.Mesh(geo,material));
  extent=Math.max(...vs.map(v=>Math.abs(v[0])),...vs.map(v=>Math.abs(v[2])))*1.5;setView();
- status.textContent='Measured terrain loaded';status.style.color='#98efb5';
+// Preliminary owner GPS boundary, draped over the measured DEM mesh.
+// These are not surveyed corners; do not use this overlay for setbacks or construction.
+const preliminaryCorners=[[-111.486556,42.292444],[-111.478639,42.292333],[-111.478806,42.289194],[-111.486500,42.289194]];
+function surfaceAt(lon,lat){
+ const [west,south,east,north]=d.bounds_wgs84;
+ const u=Math.max(0,Math.min(n-1,(lon-west)/(east-west)*(n-1)));
+ const v=Math.max(0,Math.min(n-1,(north-lat)/(north-south)*(n-1)));
+ const j=Math.min(n-2,Math.floor(u)),i=Math.min(n-2,Math.floor(v)),a=u-j,b=v-i;
+ const z=(r,c)=>vs[r*n+c][1];
+ return (1-a)*(1-b)*z(i,j)+a*(1-b)*z(i,j+1)+(1-a)*b*z(i+1,j)+a*b*z(i+1,j+1)-min;
+}
+function xyzAt(lon,lat,offset=3){
+ const [west,south,east,north]=d.bounds_wgs84;
+ return new THREE.Vector3((lon-d.center_wgs84[0])*111320*Math.cos(d.center_wgs84[1]*Math.PI/180),surfaceAt(lon,lat)+offset,(d.center_wgs84[1]-lat)*111132);
+}
+const boundaryPts=[];
+for(let k=0;k<4;k++){const a=preliminaryCorners[k],b=preliminaryCorners[(k+1)%4];for(let step=0;step<32;step++){let t=step/32;boundaryPts.push(xyzAt(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t));}}
+line(boundaryPts,0xff3047);
+for(const corner of preliminaryCorners){const marker=new THREE.Mesh(new THREE.SphereGeometry(5,10,8),new THREE.MeshBasicMaterial({color:0xff3047}));marker.position.copy(xyzAt(...corner,5));scene.add(marker);}
+const entrance=new THREE.Mesh(new THREE.SphereGeometry(8,12,10),new THREE.MeshBasicMaterial({color:0x00ffad}));entrance.position.copy(xyzAt(-111.486472,42.2905,8));scene.add(entrance);
+
+ status.textContent='Measured terrain and preliminary parcel overlay loaded';status.style.color='#98efb5';
  details.textContent='USGS-derived DEM mesh · '+n+' × '+n+' vertices · elevation '+min.toFixed(1)+'–'+max.toFixed(1)+' m. Terrain is planning-grade, not survey-grade.';
 }catch(e){status.textContent='Terrain data not available';details.textContent=e.message+'. The viewer is installed, but no elevation mesh has been verified or published. Do not interpret the empty view as flat terrain.';}
 }
