@@ -42,6 +42,27 @@ for(let k=0;k<4;k++){const a=preliminaryCorners[k],b=preliminaryCorners[(k+1)%4]
 line(boundaryPts,0xff3047);
 for(const corner of preliminaryCorners){const marker=new THREE.Mesh(new THREE.SphereGeometry(5,10,8),new THREE.MeshBasicMaterial({color:0xff3047}));marker.position.copy(xyzAt(...corner,5));scene.add(marker);}
 const entrance=new THREE.Mesh(new THREE.SphereGeometry(8,12,10),new THREE.MeshBasicMaterial({color:0x00ffad}));entrance.position.copy(xyzAt(-111.486472,42.2905,8));scene.add(entrance);
+try{
+ const roadResponse=await fetch('roads.geojson',{cache:'no-store'});
+ if(!roadResponse.ok)throw Error('road file '+roadResponse.status);
+ const roadData=await roadResponse.json();let roadCount=0;
+ for(const feature of roadData.features){
+  const coords=feature.geometry?.coordinates;
+  if(feature.geometry?.type!=='LineString'||!Array.isArray(coords)||coords.length<2)continue;
+  const segments=[];let current=[];
+  for(const pt of coords){
+   if(pt[0]>=d.bounds_wgs84[0]&&pt[0]<=d.bounds_wgs84[2]&&pt[1]>=d.bounds_wgs84[1]&&pt[1]<=d.bounds_wgs84[3]){
+    current.push(xyzAt(pt[0],pt[1],4));
+   }else if(current.length){if(current.length>1)segments.push(current);current=[];}
+  }
+  if(current.length>1)segments.push(current);
+  const cat=feature.properties?.category||'road';
+  const color=cat==='trail'?0xb04cff:cat==='track'?0xffc542:0x16c784;
+  for(const points of segments){scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color})));roadCount++;}
+ }
+ details.textContent+=' '+roadCount+' mapped road/trail pieces draped (OSM categories, not legal access or difficulty).';
+}catch(roadError){details.textContent+=' Road overlay unavailable: '+roadError.message;}
+
 
  status.textContent='Measured terrain and preliminary parcel overlay loaded';status.style.color='#98efb5';
  details.textContent='USGS-derived DEM mesh · '+n+' × '+n+' vertices · elevation '+min.toFixed(1)+'–'+max.toFixed(1)+' m. Terrain is planning-grade, not survey-grade.';
