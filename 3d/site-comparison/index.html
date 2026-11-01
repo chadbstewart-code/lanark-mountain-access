@@ -127,6 +127,7 @@ setWindScenario(windSelect.value);
 // Candidate pins are selected by clicking measured terrain. Never infer coordinates from screenshot pixels.
 const candidateSites={A:null,B:null},siteMarkers={},siteResult=document.getElementById('siteResult');
 let pickingRoad=false,roadPoint=null,roadMarker=null;
+const sightlineGroup=new THREE.Group();scene.add(sightlineGroup);
 const losResult=document.getElementById('losResult');
 document.getElementById('setRoad').onclick=()=>{activeSite=null;drawingTrees=false;drawingClearing=false;pickingRoad=true;losResult.textContent='Click the approximate camera location on Mill Canyon Road.';};
 function sampleElevationAt(x,z){
@@ -140,6 +141,7 @@ function sampleElevationAt(x,z){
 }
 document.getElementById('checkLOS').onclick=()=>{
  if(!roadPoint){losResult.textContent='Pin the road camera location first.';return;}
+ while(sightlineGroup.children.length){const o=sightlineGroup.children[0];sightlineGroup.remove(o);o.geometry?.dispose();o.material?.dispose();}
  let lines=[];
  for(const id of ['A','B']){
   const site=candidateSites[id];if(!site){lines.push('Site '+id+': not pinned');continue;}
@@ -156,10 +158,16 @@ document.getElementById('checkLOS').onclick=()=>{
    maxObstruction=Math.max(maxObstruction,excess);
    if(excess>0)blocked=true;
   }
+  const startPoint=new THREE.Vector3(roadPoint.x,start-min,roadPoint.z);
+  const endPoint=new THREE.Vector3(sx,end-min,sz);
+  const sightline=new THREE.Line(new THREE.BufferGeometry().setFromPoints([startPoint,endPoint]),new THREE.LineBasicMaterial({color:blocked?0x32e69a:0xff4a55,depthTest:false}));
+  sightline.renderOrder=50;sightlineGroup.add(sightline);
+  const target=new THREE.Mesh(new THREE.SphereGeometry(7,12,10),new THREE.MeshBasicMaterial({color:blocked?0x32e69a:0xff4a55,depthTest:false}));
+  target.position.copy(endPoint);target.renderOrder=51;sightlineGroup.add(target);
   lines.push('Site '+id+': '+(blocked?'terrain blocks hypothetical roof view':'no terrain obstruction detected')+' · '+dist.toFixed(0)+' m · max terrain excess '+maxObstruction.toFixed(1)+' m');
  }
  losResult.style.whiteSpace='pre-line';
- losResult.textContent=lines.join('\n')+'\nPlanning-grade bare-earth DEM (~14×19 m); assumes 1.7 m viewer height and 3.66 m roof height above ground. Road viewpoint and sites provisional. No tree/seasonal screening, curvature, or surveyed accuracy. Not proof of invisibility.';
+ losResult.textContent='Sightlines drawn: GREEN = terrain obstructed; RED = roof visible in bare-earth model.\n'+lines.join('\n')+'\nPlanning-grade bare-earth DEM (~14×19 m); assumes 1.7 m viewer height and 3.66 m roof height above ground. Road viewpoint and sites provisional. No tree/seasonal screening, curvature, or surveyed accuracy. Not proof of invisibility.';
 };
 
 const clearingPoints=[],clearingGroup=new THREE.Group();scene.add(clearingGroup);let drawingClearing=false;
