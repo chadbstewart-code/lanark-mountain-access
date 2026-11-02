@@ -35,7 +35,7 @@ def scanned_pdf_text(raw, max_pages=30):
   source=pathlib.Path(tmp)/"source.pdf";source.write_bytes(raw)
   info=subprocess.run(["pdfinfo",str(source)],capture_output=True,text=True,timeout=30)
   if info.returncode:raise RuntimeError("pdfinfo failed: "+info.stderr[:200])
-  m=re.search(r"^Pages:\\s*(\\d+)",info.stdout,re.M)
+  m=re.search(r"^Pages:\s*(\d+)",info.stdout,re.M)
   if not m:raise RuntimeError("Could not determine page count")
   count=int(m.group(1))
   if count>max_pages:raise RuntimeError(f"Scanned PDF has {count} pages; OCR limit {max_pages}")
