@@ -7,6 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from pypdf import PdfReader
 from io import BytesIO
+import subprocess,tempfile
 
 ROOT="https://www.bearlakecounty.info/"
 SOURCES={"planning":"planning-and-zoning.html","commissioners":"meetings.html"}
@@ -28,6 +29,26 @@ def discover(group,years):
   if href in seen:continue
   seen.add(href);found.append({"url":href,"label":label,"context":context})
  return found
+def scanned_pdf_text(raw, max_pages=30):
+ """Last-resort OCR only when native PDF text extraction is empty."""
+ with tempfile.TemporaryDirectory() as tmp:
+  source=pathlib.Path(tmp)/"source.pdf";source.write_bytes(raw)
+  info=subprocess.run(["pdfinfo",str(source)],capture_output=True,text=True,timeout=30)
+  if info.returncode:raise RuntimeError("pdfinfo failed: "+info.stderr[:200])
+  m=re.search(r"^Pages:\\s*(\\d+)",info.stdout,re.M)
+  if not m:raise RuntimeError("Could not determine page count")
+  count=int(m.group(1))
+  if count>max_pages:raise RuntimeError(f"Scanned PDF has {count} pages; OCR limit {max_pages}")
+  pages=[]
+  for i in range(1,count+1):
+   image=pathlib.Path(tmp)/f"page-{i}.png"
+   subprocess.run(["pdftoppm","-f",str(i),"-l",str(i),"-singlefile","-scale-to","1700","-png",str(source),str(image.with_suffix(""))],check=True,capture_output=True,timeout=75)
+   result=subprocess.run(["tesseract",str(image),"stdout","-l","eng"],capture_output=True,text=True,timeout=75)
+   if result.returncode:raise RuntimeError("OCR failed: "+result.stderr[:200])
+   pages.append(result.stdout.strip())
+   image.unlink(missing_ok=True)
+  return pages
+
 def setup(db):
  db.executescript("""
  CREATE TABLE IF NOT EXISTS documents(id TEXT PRIMARY KEY, source_group TEXT, url TEXT UNIQUE, title TEXT, sha256 TEXT, pages INTEGER, fetched_utc TEXT, status TEXT, error TEXT);
@@ -50,7 +71,11 @@ def run(args):
     sha=hashlib.sha256(raw).hexdigest()
     reader=PdfReader(BytesIO(raw),strict=False)
     texts=[(p.extract_text(extraction_mode="layout") or "").strip() for p in reader.pages]
-    if not any(texts):raise ValueError("No extractable text; needs manual review/OCR")
+    ocr_used=False
+    if not any(texts):
+     texts=scanned_pdf_text(raw)
+     ocr_used=True
+    if not any(t.strip() for t in texts):raise ValueError("No readable text after OCR; manual review needed")
     with db:
      db.execute("DELETE FROM page_search WHERE doc_id=?",(docid,))
      db.execute("DELETE FROM pages WHERE doc_id=?",(docid,))
@@ -58,7 +83,7 @@ def run(args):
       db.execute("INSERT INTO pages VALUES(?,?,?)",(docid,i,t))
       db.execute("INSERT INTO page_search VALUES(?,?,?)",(docid,i,t))
      db.execute("INSERT OR REPLACE INTO documents VALUES(?,?,?,?,?,?,?,?,?)",(docid,group,url,item["label"],sha,len(texts),manifest["generated_utc"],"indexed",None))
-    record.update({"status":"indexed","pages":len(texts),"sha256":sha,"text_characters":sum(map(len,texts))})
+    record.update({"status":"indexed","pages":len(texts),"sha256":sha,"text_characters":sum(map(len,texts)),"ocr_used":ocr_used})
    except Exception as e:
     record.update({"status":"error","error":str(e)})
     with db:db.execute("INSERT OR REPLACE INTO documents VALUES(?,?,?,?,?,?,?,?,?)",(docid,group,url,item["label"],None,None,manifest["generated_utc"],"error",str(e)))
