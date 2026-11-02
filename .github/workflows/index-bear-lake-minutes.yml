@@ -14,12 +14,14 @@ concurrency:
 jobs:
   index:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install scanned-PDF OCR tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils tesseract-ocr
       - run: python -m pip install requests beautifulsoup4 pypdf
       - name: Index 2024–2026 planning minutes
         run: python research/county-minutes/collect.py --groups planning --years 2024 2025 2026 --max-per-group 60
