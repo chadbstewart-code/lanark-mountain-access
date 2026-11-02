@@ -23,6 +23,13 @@ jobs:
       - run: python -m pip install requests beautifulsoup4 pypdf
       - name: Index 2024–2026 planning minutes
         run: python research/county-minutes/collect.py --groups planning --years 2024 2025 2026 --max-per-group 60
+      - name: Show retrieval errors
+        run: |
+          python - <<'PY'
+          import json
+          m=json.load(open('research/county-minutes/data/manifest.json'))
+          for d in m['documents'][:35]: print(d.get('label'),d.get('url'),d.get('status'),d.get('error'))
+          PY
       - name: Validate results
         run: |
           python - <<'PY'
@@ -32,6 +39,12 @@ jobs:
           print('Indexed',indexed,'documents')
           if indexed<1:raise SystemExit('No documents indexed; inspect discovery')
           PY
+      - name: Upload diagnostics even if validation fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bear-lake-index-diagnostics
+          path: research/county-minutes/data/manifest.json
       - name: Commit source manifest and searchable index
         run: |
           git config user.name "github-actions[bot]"
